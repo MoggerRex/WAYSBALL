@@ -1,0 +1,28 @@
+.icon { display: block; flex: none; }
+.brand { color: var(--red); font-family: var(--font-display); font-size: 19px; letter-spacing: -1.2px; position: relative; }
+.brand span { color: inherit; }
+.brand-button { background: transparent; border: 0; cursor: pointer; padding: 8px; }
+.eyebrow { color: var(--red); display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; }
+.eyebrow.light { color: var(--mist); }
+h1 em, h2 em { color: var(--red); font-style: normal; }
+.primary-button { align-items: center; background: var(--red); border: 0; border-radius: 4px; cursor: pointer; display: inline-flex; font-size: 13px; font-weight: 700; gap: 12px; justify-content: center; letter-spacing: .8px; min-height: 50px; padding: 0 20px; text-transform: uppercase; }
+.primary-button:disabled { cursor: not-allowed; opacity: .4; }
+.light-button { background: var(--mist); color: var(--navy); }
+.full { width: 100%; }
+.page { min-height: calc(100dvh - var(--header-height) - var(--footer-height)); }
+.page-intro { background: var(--navy); padding: 44px 24px 30px; }
+.page-intro h1 { font-size: clamp(38px, 11vw, 54px); line-height: .96; margin: 10px 0 16px; }
+.page-intro p { color: var(--mist); font-size: 14px; line-height: 1.5; margin: 0; max-width: 360px; }
+.detail-heading h2 { color: var(--white); font-size: 30px; line-height: 1.05; margin: 8px 0 17px; }
+.player-shade { background: linear-gradient(180deg, transparent 25%, rgba(0,28,45,.95) 93%); inset: 0; position: absolute; }
+.carousel-controls { display: flex; gap: 7px; position: absolute; right: 15px; top: 15px; z-index: 3; }
+.carousel-controls button { align-items: center; background: rgba(0,28,45,.78); border: 1px solid rgba(255,255,255,.3); color: white; cursor: pointer; display: flex; height: 42px; justify-content: center; width: 42px; }
+.carousel-dots { display: flex; gap: 7px; justify-content: center; padding-top: 16px; }
+.carousel-dots button { background: rgba(210,219,235,.35); border: 0; border-radius: 999px; height: 4px; width: 22px; }
+.carousel-dots button.active { background: var(--red); width: 40px; }
+.modal-secondary-button { align-items: center; background: transparent; border: 1px solid rgba(0,56,90,.32); color: var(--navy); cursor: pointer; display: flex; font-size: 10px; font-weight: 700; gap: 8px; justify-content: center; min-height: 46px; padding: 0 16px; text-transform: uppercase; width: 100%; }
+.modal-secondary-button .icon { height: 17px; width: 17px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *:before, *:after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

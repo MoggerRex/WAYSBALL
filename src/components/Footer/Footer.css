@@ -1,0 +1,12 @@
+.bottom-nav { background: #d2dbeb; bottom: 0; display: grid; grid-template-columns: repeat(4,1fr); height: var(--footer-height); left: 50%; max-width: 520px; padding-bottom: var(--safe-bottom); position: fixed; transform: translateX(-50%); width: 100%; z-index: 25; }
+.bottom-nav button { align-items: center; background: none; border: 0; color: #536b7a; cursor: pointer; display: flex; flex-direction: column; font-size: 9px; gap: 6px; justify-content: center; padding: 0; position: relative; }
+.bottom-nav button.active { color: var(--red); }
+.bottom-nav button.active:before { background: var(--red); content: ""; height: 3px; left: 25%; position: absolute; right: 25%; top: 0; }
+.bottom-nav button > span:last-child { font-weight: 600; }
+.footer-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+@media (min-width: 720px) { .bottom-nav { bottom: 24px; } }

@@ -1,0 +1,40 @@
+.detail-page { background: var(--navy-dark); color: var(--white); min-height: calc(100dvh - var(--header-height) - var(--footer-height)); padding-top: 58px; }
+.team-hero { align-items: flex-end; background: linear-gradient(145deg, color-mix(in srgb, var(--team-color) 85%, var(--navy-dark)), var(--navy-dark)); color: white; display: flex; min-height: 330px; overflow: hidden; padding: 30px 24px; position: relative; }
+.team-hero h1 { font-size: 42px; line-height: .97; margin: 8px 0; }
+.team-hero > div { position: relative; z-index: 2; }
+.detail-team-logo { filter: drop-shadow(0 15px 24px rgba(0,0,0,.24)); height: 245px; object-fit: contain; opacity: .38; position: absolute; right: -8px; top: 15px; width: 270px; }
+.team-story, .detail-section { background: var(--navy-dark); border-bottom: 1px solid rgba(210,219,235,.16); padding: 38px 22px; }
+.team-story h2, .detail-heading h2 { color: var(--white); font-size: 30px; line-height: 1.05; margin: 8px 0 17px; }
+.team-story > p, .detail-section > p { color: var(--mist); font-size: 15px; line-height: 1.7; }
+.stadium-feature { height: 280px; margin: 25px 0 20px; overflow: hidden; position: relative; }
+.stadium-feature img { height: 100%; object-fit: cover; width: 100%; }
+.player-carousel { height: 430px; margin-top: 24px; overflow: hidden; position: relative; }
+.player-carousel > img { height: 100%; object-fit: cover; width: 100%; }
+.player-shade { background: linear-gradient(180deg, transparent 25%, rgba(0,28,45,.95) 93%); inset: 0; position: absolute; }
+.player-copy { bottom: 24px; left: 20px; position: absolute; right: 80px; z-index: 2; }
+.carousel-controls { display: flex; gap: 7px; position: absolute; right: 15px; top: 15px; z-index: 3; }
+.carousel-controls button { align-items: center; background: rgba(0,28,45,.78); border: 1px solid rgba(255,255,255,.3); color: white; cursor: pointer; display: flex; height: 42px; justify-content: center; width: 42px; }
+.carousel-dots { display: flex; gap: 7px; justify-content: center; padding-top: 16px; }
+.carousel-dots button { background: rgba(210,219,235,.35); border: 0; border-radius: 999px; height: 4px; width: 22px; }
+.carousel-dots button.active { background: var(--red); width: 40px; }
+.achievement-list { border-top: 1px solid rgba(210,219,235,.2); margin-top: 26px; }
+.achievement-list article { align-items: center; border-bottom: 1px solid rgba(210,219,235,.2); display: grid; gap: 18px; grid-template-columns: 42px 1fr; padding: 21px 0; }
+.back-label { align-items: center; background: rgba(0,42,68,.98); border: 0; box-shadow: 0 8px 18px rgba(0,18,30,.18); color: var(--mist); cursor: pointer; display: flex; font-size: 12px; gap: 4px; height: 58px; left: 50%; max-width: 520px; padding: 0 20px; position: fixed; top: var(--header-height); transform: translateX(-50%); width: 100%; z-index: 29; }
+.team-hero:after { background: linear-gradient(180deg, transparent 20%, rgba(0,28,45,.75) 100%); content: ""; inset: 0; position: absolute; }
+.team-hero p { color: var(--mist); margin: 0; }
+.team-story h2 { color: var(--white); }
+.team-story > p, .detail-section > p { margin-bottom: 0; }
+.stadium-section { padding-left: 0; padding-right: 0; }
+.stadium-section .detail-heading, .stadium-section > p { margin-left: 22px; margin-right: 22px; }
+.stadium-feature:after { background: linear-gradient(transparent 45%, rgba(0,28,45,.9)); content: ""; inset: 0; position: absolute; }
+.capacity-badge { bottom: 18px; color: white; left: 22px; position: absolute; z-index: 2; }
+.capacity-badge strong, .capacity-badge span { display: block; }
+.capacity-badge strong { font-family: var(--font-display); font-size: 28px; }
+.capacity-badge span { color: var(--mist); font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; }
+.player-copy > span { color: var(--mist); font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; }
+.player-copy h3 { font-family: var(--font-display); font-size: 29px; line-height: 1; margin: 7px 0; text-transform: uppercase; }
+.player-copy p { color: var(--mist); font-size: 12px; margin: 0; }
+.achievements-section { padding-bottom: 55px; }
+.achievement-list article > span { color: var(--red); font-family: var(--font-display); font-size: 17px; }
+.achievement-list article p { color: var(--white); font-size: 14px; font-weight: 600; line-height: 1.45; margin: 0; }
+@media (min-width: 720px) { .back-label { top: calc(24px + var(--header-height)); } }

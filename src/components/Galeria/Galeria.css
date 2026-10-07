@@ -1,0 +1,85 @@
+.gallery-page { 
+  background: var(--navy-dark); 
+}
+
+.gallery-grid { 
+  background: var(--navy-dark); 
+  color: var(--white); 
+  display: grid; 
+  gap: 9px; 
+  grid-template-columns: repeat(3, minmax(0, 1fr)); 
+  padding: 16px 14px 48px; 
+}
+
+.gallery-card { 
+  aspect-ratio: .76; 
+  background: rgba(210, 219, 235, .06); 
+  border: 1px solid rgba(210, 219, 235, .16); 
+  color: white; 
+  cursor: pointer; 
+  overflow: hidden; 
+  padding: 0; 
+  position: relative; 
+  text-align: left; 
+  width: 100%; 
+}
+
+.gallery-card > img, 
+.gallery-card > video { 
+  height: 100%; 
+  object-fit: cover; 
+  width: 100%; 
+}
+
+.gallery-card.locked img, 
+.gallery-card.locked video { 
+  filter: grayscale(1) blur(4px) brightness(.45); 
+}
+.gallery-intro { padding-bottom: 38px; }
+.gallery-card:after { background: linear-gradient(transparent 38%, rgba(0,28,45,.95)); content: ""; inset: 0; position: absolute; }
+.gallery-card:not(.locked):hover > img, .gallery-card:not(.locked):hover > video { transform: scale(1.06); }
+.gallery-caption { bottom: 9px; color: white; left: 8px; position: absolute; right: 5px; z-index: 2; }
+.gallery-caption span, .gallery-caption strong { display: block; }
+.gallery-caption span { font-size: 7px; letter-spacing: .8px; }
+.gallery-caption strong { font-family: var(--font-display); font-size: 11px; line-height: 1.08; margin-top: 4px; text-transform: uppercase; }
+.gallery-card.locked { cursor: pointer; }
+.media-type { background: var(--red); color: white; font-size: 6px; font-weight: 700; letter-spacing: .7px; padding: 4px 5px; position: absolute; right: 5px; text-transform: uppercase; top: 5px; z-index: 4; }
+.lock-screen { color: white; }
+.lock-screen .icon { height: 18px; width: 18px; }
+.lock-screen span { font-size: 8px; font-weight: 700; text-transform: uppercase; }
+.lock-screen small { border-bottom: 1px solid rgba(255,255,255,.7); font-size: 6px; padding-bottom: 2px; text-transform: uppercase; }
+
+/* Pantalla de bloqueo con alta especificidad */
+.gallery-card .lock-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  z-index: 2;
+  padding: 4px;
+}
+
+/* Texto "Reto X" claramente prominente */
+.gallery-card .lock-screen span {
+  font-size: .65rem !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+/* Texto "Detalles del reto" accesible */
+.gallery-card .lock-screen small {
+  font-size: 0.5rem !important;
+  font-weight: 600;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  color: #d2dbe1;
+}

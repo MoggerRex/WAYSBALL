@@ -1,0 +1,46 @@
+.menu-layer { inset: 0; pointer-events: none; position: fixed; z-index: 50; }
+.menu-layer.open { pointer-events: auto; }
+.menu-scrim { background: rgba(0,14,23,.7); border: 0; inset: 0; opacity: 0; position: absolute; transition: opacity .25s; width: 100%; }
+.open .menu-scrim { opacity: 1; }
+.side-menu { background: #d2dbeb; color: var(--ink); height: 100%; left: max(0px, calc(50% - 260px)); max-width: 420px; overflow-y: auto; padding: 0 20px 25px; position: absolute; top: 0; transform: translateX(-105%); transition: transform .3s ease; width: 88%; }
+.open .side-menu { transform: translateX(0); }
+.season-card { background: var(--navy); color: white; margin: 6px 0 20px; padding: 22px; }
+.menu-top { align-items: center; display: flex; height: var(--header-height); justify-content: space-between; padding-top: var(--safe-top); }
+.menu-top .brand { font-size: 22px; letter-spacing: -1.4px; }
+.menu-top .icon-button { font-size: 30px; font-weight: 300; }
+.season-card > strong { display: block; font-family: var(--font-display); font-size: 28px; margin: 5px 0 14px; text-transform: uppercase; }
+.season-card > div { background: rgba(255,255,255,.18); height: 5px; }
+.season-card > div i { background: var(--red); display: block; height: 100%; }
+.season-card small { color: var(--mist); display: block; font-size: 10px; margin-top: 8px; }
+.side-menu nav { border-top: 1px solid #bdc6c9; }
+.side-menu nav button { align-items: center; background: none; border: 0; border-bottom: 1px solid #bdc6c9; color: var(--ink); cursor: pointer; display: grid; gap: 12px; grid-template-columns: 25px 1fr 22px; padding: 17px 3px; text-align: left; width: 100%; }
+.side-menu nav button span { font-size: 13px; font-weight: 600; }
+.objective-list { padding: 25px 3px 18px; }
+.pinned-objective { border-left: 3px solid var(--red); margin-top: 15px; padding: 2px 4px 3px 14px; }
+.pinned-objective > span { color: var(--red); display: block; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.pinned-objective h3 { font-family: var(--font-display); font-size: 17px; line-height: 1.1; margin: 6px 0 9px; text-transform: uppercase; }
+.pinned-objective p { color: #53626a; font-size: 11px; line-height: 1.45; margin: 0 0 11px; }
+.pinned-objective small { color: var(--navy); font-size: 9px; font-weight: 700; text-transform: uppercase; }
+.collection-button { align-items: center; background: var(--navy-dark); border: 1px solid rgba(238,237,238,.16); color: var(--white); cursor: pointer; display: grid; gap: 12px; grid-template-columns: 26px 1fr 24px; padding: 16px; text-align: left; width: 100%; }
+.collection-button span, .collection-button b, .collection-button small { display: block; }
+.collection-button span { font-size: 12px; }
+.collection-button b { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; }
+.collection-button small { color: var(--mist); font-size: 9px; margin-top: 3px; }
+.reset-season-button { align-items: center; background: transparent; border: 1px solid rgba(185,31,11,.45); color: var(--red-dark); cursor: pointer; display: flex; font-size: 10px; font-weight: 700; gap: 9px; justify-content: center; margin-top: 12px; min-height: 46px; text-transform: uppercase; transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease; width: 100%; }
+.reset-season-button .icon { height: 18px; width: 18px; }
+.season-reset-layer { align-items: center; background: rgba(0,18,30,.84); display: flex; inset: 0; justify-content: center; left: 50%; max-width: 520px; padding: 24px; position: fixed; transform: translateX(-50%); width: 100%; z-index: 70; }
+.season-reset-modal { background: var(--paper); color: var(--ink); max-width: 420px; padding: 30px 24px 24px; width: 100%; }
+.season-reset-modal h2 { font-size: 31px; line-height: 1; margin: 8px 0 14px; }
+.season-reset-modal > p { color: #53626a; font-size: 13px; line-height: 1.55; }
+.season-reset-modal > small { color: var(--red-dark); display: block; font-size: 9px; font-weight: 700; margin-top: 13px; text-transform: uppercase; }
+.season-reset-summary { background: var(--mist); display: grid; gap: 1px; margin-top: 20px; }
+.season-reset-summary p { align-items: center; background: rgba(245,241,232,.62); display: flex; font-size: 10px; font-weight: 700; gap: 10px; margin: 0; padding: 11px 13px; text-transform: uppercase; }
+.season-reset-summary .icon { color: var(--navy); height: 17px; width: 17px; }
+.season-reset-actions { display: grid; gap: 8px; margin-top: 20px; }
+.season-reset-actions button { transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease, transform .18s ease; }
+@media (hover: hover) {
+	.reset-season-button:hover { background: var(--red-dark); border-color: var(--red-dark); color: white; transform: translateY(-1px); }
+	.season-reset-actions .primary-button:hover { background: var(--red-dark); box-shadow: 0 7px 16px rgba(0,28,45,.2); transform: translateY(-1px); }
+	.season-reset-actions .modal-secondary-button:hover { background: var(--navy); border-color: var(--navy); color: white; transform: translateY(-1px); }
+}
+@media (min-width: 720px) { .season-reset-layer { bottom: 24px; top: 24px; } }

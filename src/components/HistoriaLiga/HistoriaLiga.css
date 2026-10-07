@@ -1,0 +1,32 @@
+.history-page { background: var(--navy-dark); color: var(--white); }
+.league-hero { align-items: flex-end; background: linear-gradient(145deg, #ce311e, var(--navy-dark) 78%); display: flex; height: 390px; overflow: hidden; padding: 30px 22px; position: relative; }
+.league-section { background: var(--navy-dark); border-bottom: 1px solid rgba(210,219,235,.16); padding: 42px 22px 50px; }
+.league-timeline { display: grid; gap: 24px; margin-top: 28px; }
+.league-timeline-item { background: rgba(210,219,235,.06); border: 1px solid rgba(210,219,235,.15); overflow: hidden; }
+.league-timeline-item > img { display: block; height: 175px; object-fit: cover; width: 100%; }
+.league-hero:after { background: linear-gradient(180deg, transparent 18%, rgba(0,28,45,.8) 100%); content: ""; inset: 0; position: absolute; }
+.league-hero > img { filter: drop-shadow(0 18px 25px rgba(0,0,0,.26)); height: 300px; object-fit: contain; opacity: .38; position: absolute; right: -25px; top: 20px; transform: rotate(-5deg); width: 330px; }
+.league-hero > div { position: relative; z-index: 2; }
+.league-hero h1 { font-size: 40px; line-height: .96; margin: 9px 0 13px; }
+.league-hero p { color: var(--mist); font-size: 13px; line-height: 1.45; margin: 0; max-width: 320px; }
+.league-lead { color: var(--mist); font-size: 14px; line-height: 1.7; margin-bottom: 28px; }
+.league-timeline-item > div { padding: 18px; }
+.league-timeline-item span { color: var(--red); display: block; font-family: var(--font-display); font-size: 17px; margin-bottom: 7px; }
+.league-timeline-item h3 { color: var(--white); font-size: 17px; margin-bottom: 8px; }
+.league-timeline-item p { color: var(--mist); font-size: 12px; line-height: 1.55; margin: 0; }
+.tournament-hero { height: 510px; margin-top: 26px; overflow: hidden; position: relative; }
+.tournament-hero > img { height: 100%; object-fit: cover; width: 100%; }
+.tournament-copy { bottom: 23px; left: 19px; position: absolute; right: 18px; z-index: 2; }
+.tournament-copy > span { color: var(--mist); font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; }
+.tournament-copy h3 { font-family: var(--font-display); font-size: 29px; line-height: 1; margin: 8px 0; text-transform: uppercase; }
+.tournament-copy p { color: var(--mist); font-size: 12px; line-height: 1.5; margin: 0 0 16px; }
+.tournament-copy strong { border-left: 3px solid var(--red); display: block; font-size: 11px; letter-spacing: .5px; padding-left: 10px; text-transform: uppercase; }
+.actuality-image { height: 260px; margin: 25px -22px; overflow: hidden; }
+.actuality-image img { height: 100%; object-fit: cover; width: 100%; }
+.league-stats { display: grid; gap: 1px; grid-template-columns: repeat(3,1fr); margin-top: 28px; }
+.league-stats div { background: rgba(210,219,235,.09); padding: 18px 8px; text-align: center; }
+.league-stats strong, .league-stats span { display: block; }
+.league-stats strong { font-family: var(--font-display); font-size: 24px; }
+.league-stats span { color: var(--mist); font-size: 9px; letter-spacing: 1px; margin-top: 5px; text-transform: uppercase; }
+.moments-section { padding-bottom: 65px; }
+.historic-timeline .league-timeline-item { border-left: 3px solid var(--red); }

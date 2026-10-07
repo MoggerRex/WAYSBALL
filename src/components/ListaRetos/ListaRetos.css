@@ -1,0 +1,21 @@
+.challenges-page { background: var(--navy-dark); }
+.challenge-progress { background: rgba(210,219,235,.18); height: 5px; margin-top: 25px; }
+.challenge-progress i { background: var(--red); display: block; height: 100%; }
+.challenge-list { display: grid; gap: 11px; padding: 16px 14px 50px; }
+.challenge-list article { background: rgba(210,219,235,.06); border: 1px solid rgba(210,219,235,.16); display: grid; gap: 15px; grid-template-columns: 45px 1fr; padding: 19px 16px; }
+.challenge-list article.completed { border-color: rgba(111,190,128,.45); }
+.challenges-intro { padding-bottom: 32px; }
+.challenges-intro > small { color: var(--mist); display: block; font-size: 9px; margin-top: 8px; text-transform: uppercase; }
+.challenge-list article.completed { background: color-mix(in srgb, var(--navy) 82%, #2f7a54); }
+.challenge-number { align-items: center; border: 1px solid rgba(210,219,235,.35); border-radius: 50%; color: var(--mist); display: flex; font-family: var(--font-display); font-size: 12px; height: 42px; justify-content: center; width: 42px; }
+.completed .challenge-number { background: #2f7a54; border-color: #75b986; color: white; }
+.challenge-list article > div:last-child > span { color: var(--red); display: block; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+.challenge-list article.completed > div:last-child > span { color: #84d296; }
+.challenge-list h2 { color: var(--white); font-size: 19px; letter-spacing: -.8px; margin: 5px 0 8px; }
+.challenge-list p { color: var(--mist); font-size: 12px; line-height: 1.5; margin: 0 0 13px; }
+.challenge-list article small { color: var(--white); font-size: 9px; font-weight: 700; text-transform: uppercase; }
+.objective-button { align-items: center; background: transparent; border: 1px solid rgba(210,219,235,.38); color: var(--mist); cursor: pointer; display: flex; font-size: 9px; font-weight: 700; gap: 7px; justify-content: center; margin-top: 15px; min-height: 38px; padding: 0 12px; text-transform: uppercase; width: 100%; }
+.objective-button .icon { height: 16px; width: 16px; }
+.objective-button.active { background: var(--red); border-color: var(--red); color: white; }
+.challenge-postcard-button { font-size: 9px; margin-top: 15px; min-height: 38px; width: 100%; }
+.challenge-postcard-button + .objective-button { margin-top: 8px; }

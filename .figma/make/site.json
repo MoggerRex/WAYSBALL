@@ -1,0 +1,10 @@
+{
+  "description": "Explore the Mexican baseball league's northern teams with 3D AR models, trivia, mini-games, team histories, and an unlocking image gallery for fans.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -11,6 +11,9 @@ export default function EquipoDetalle({ index, back, teams, profiles, galleryPho
   const profile = profiles[index];
   const [activePlayer, setActivePlayer] = useState(0);
   const player = profile.players[activePlayer];
+  /* Fotos propias del club (src/App.tsx -> teams[i]); si faltan, se usa la genérica. */
+  const stadiumPhoto = team.stadiumPhoto || galleryPhotos[(index % 3) + 1];
+  const playerPhoto = team.playerPhotos?.[activePlayer] || playerPhotos[activePlayer];
   const changePlayer = (direction) => setActivePlayer((current) => (current + direction + profile.players.length) % profile.players.length);
   return <main className="detail-page">
     <button className="back-label" onClick={back}><ChevronLeft size={18} back /> Todos los equipos</button>
@@ -21,12 +24,12 @@ export default function EquipoDetalle({ index, back, teams, profiles, galleryPho
     <section className="team-story"><span className="eyebrow">Nuestra historia</span><h2>Historia del club</h2><p>{team.history}</p></section>
     <section className="detail-section stadium-section">
       <div className="detail-heading"><span className="eyebrow">Sede del club</span><h2>{team.stadium}</h2></div>
-      <div className="stadium-feature"><img src={galleryPhotos[(index % 3) + 1]} alt={`Estadio y ambiente de beisbol de ${team.name}`} /><div className="capacity-badge"><strong>{profile.capacity}</strong><span>aficionados</span></div></div>
+      <div className="stadium-feature"><img src={stadiumPhoto} alt={`Estadio y ambiente de beisbol de ${team.name}`} /><div className="capacity-badge"><strong>{profile.capacity}</strong><span>aficionados</span></div></div>
       <p>{profile.stadiumDetails}</p>
     </section>
     <section className="detail-section players-section">
       <div className="detail-heading"><span className="eyebrow">Figuras del club</span><h2>Tres nombres que dejaron huella</h2></div>
-      <div className="player-carousel"><img src={playerPhotos[activePlayer]} alt="Jugador de beisbol en acción" /><div className="player-shade" /><div className="player-copy"><span>Figura {activePlayer + 1} de 3</span><h3>{player[0]}</h3><p>{player[1]}</p></div>
+      <div className="player-carousel"><img src={playerPhoto} alt={`${player[0]}, ${player[1]}`} /><div className="player-shade" /><div className="player-copy"><span>Figura {activePlayer + 1} de 3</span><h3>{player[0]}</h3><p>{player[1]}</p></div>
         <div className="carousel-controls"><button onClick={() => changePlayer(-1)} aria-label="Jugador anterior"><ArrowIcon back /></button><button onClick={() => changePlayer(1)} aria-label="Siguiente jugador"><ArrowIcon /></button></div>
       </div>
       <div className="carousel-dots">{profile.players.map((item, playerIndex) => <button aria-label={`Ver a ${item[0]}`} className={playerIndex === activePlayer ? "active" : ""} key={item[0]} onClick={() => setActivePlayer(playerIndex)} />)}</div>

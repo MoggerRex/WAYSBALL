@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import HeaderComponent from "./components/Header/Header";
 import HomeComponent from "./components/Home/Home";
 import FooterComponent from "./components/Footer/Footer";
@@ -60,6 +60,12 @@ const galleryPhotos = [
 /* ===== FIN DE FOTOS COMPARTIDAS ===== */
 
 /* ===== DATOS DE EQUIPOS: Equipos, EquipoDetalle, Trivia y AR ===== */
+/* Fotos por club (EquipoDetalle):
+   - stadiumPhoto: una sola foto del estadio, en public/estadios/
+   - playerPhotos: 3 fotos en public/jugadores/<Equipo>/ en el MISMO orden
+     que clubProfiles[].players (figura 1, figura 2, figura 3).
+   Si un club deja stadiumPhoto vacío o playerPhotos sin elementos, se usa la
+   foto genérica de Unsplash como respaldo. */
 const teams = [
   {
     name: "Acereros de Monclova",
@@ -72,6 +78,12 @@ const teams = [
     titles: "Campeón LMB 2019",
     history:
       "La Furia Azul representa la tradición industrial de Monclova. Desde su llegada a la liga en 1974, el club ha construido una afición intensa y celebró su primer campeonato en 2019.",
+    stadiumPhoto: "/estadios/EstadioAcereros.jpeg",
+    playerPhotos: [
+      "/jugadores/Acereros/Acereros_Chris%20Carter.jpg",
+      "/jugadores/Acereros/Acereros_Josh%20Lowey.jpeg",
+      "/jugadores/Acereros/Acereros_Erck%20Aybar.jpeg",
+    ],
   },  
   {
     name: "Caliente de Durango",
@@ -84,6 +96,12 @@ const teams = [
     titles: "Nueva era",
     history:
       "La franquicia abrió una nueva etapa para el beisbol profesional de Durango en 2024, llevando una identidad contemporánea al histórico parque Francisco Villa.",
+    stadiumPhoto: "/estadios/EstadioCalientes.jpg",
+    playerPhotos: [
+      "/jugadores/Calientes/AlberthMartínez.jpg",
+      "/jugadores/Calientes/TiagoDaSilva.jpeg",
+      "/jugadores/Calientes/MichaelRobles.jpeg",
+    ],
   },
   {
     name: "Charros de Jalisco",
@@ -96,6 +114,12 @@ const teams = [
     titles: "2 campeonatos LMB",
     history:
       "Los Charros son un símbolo deportivo de Jalisco. Su historia en la LMB atraviesa distintas épocas y conecta la tradición charra con una de las aficiones más reconocibles del país.",
+    stadiumPhoto: "/estadios/EstadioCharros.jpg",
+    playerPhotos: [
+      "/jugadores/Charros/FernandoValenzuela.jpg",
+      "/jugadores/Charros/BenjamínGil.jpg",
+      "/jugadores/Charros/JaphetAmador.jpg",
+    ],
   }, 
   {
     name: "Dorados de Chihuahua",
@@ -108,6 +132,12 @@ const teams = [
     titles: "Regreso a la LMB",
     history:
       "Chihuahua recuperó su lugar en el máximo circuito de verano con el regreso de los Dorados, una franquicia que recoge décadas de pasión beisbolera en el estado grande.",
+    stadiumPhoto: "/estadios/EstadioDorados.jpg",
+    playerPhotos: [
+      "/jugadores/Dorados/FélixDoubront.webp",
+      "/jugadores/Dorados/SebastiánElizalde.jpg",
+      "/jugadores/Dorados/OctavioAcosta.jpg",
+    ],
   },
   {
     name: "Sultanes de Monterrey",
@@ -120,6 +150,12 @@ const teams = [
     titles: "10 campeonatos",
     history:
       "Fundados como Carta Blanca en 1939, los Sultanes son una de las instituciones más ganadoras y longevas de la LMB. Monterrey respira beisbol en cada serie.",
+    stadiumPhoto: "/estadios/EstadioSultanes.jpg",
+    playerPhotos: [
+      "/jugadores/Sultanes/HéctorEspino.jpg",
+      "/jugadores/Sultanes/VinicioCastilla.jpg",
+      "/jugadores/Sultanes/RamiroPeña.webp",
+    ],
   },
   {
     name: "Rieleros de Aguascalientes",
@@ -132,6 +168,12 @@ const teams = [
     titles: "Campeón LMB 1978",
     history:
       "Inspirados por la tradición ferroviaria de Aguascalientes, los Rieleros debutaron en 1975 y conquistaron la liga apenas tres años después, en una temporada inolvidable.",
+    stadiumPhoto: "/estadios/EstadioRieleros.jpg",
+    playerPhotos: [
+      "/jugadores/Rieleros/DerekBryant.jpg",
+      "/jugadores/Rieleros/SaulSoto.jpg",
+      "/jugadores/Rieleros/RamónRamírez.jpg",
+    ],
   },  
   {
     name: "Algodoneros Unión Laguna",
@@ -144,6 +186,12 @@ const teams = [
     titles: "2 campeonatos",
     history:
       "Uno de los nombres históricos del beisbol lagunero. Su identidad nace del algodón, motor regional, y de una afición que convirtió al Estadio Revolución en una plaza legendaria.",
+    stadiumPhoto: "/estadios/EstadioAlgodoneros.jpeg",
+    playerPhotos: [
+      "/jugadores/Algodoneros/MartínDihigo.jpg",
+      "/jugadores/Algodoneros/JonathanVillar.jpg",
+      "/jugadores/Algodoneros/NickTorres.webp",
+    ],
   }, 
   {
     name: "Saraperos de Saltillo",
@@ -156,6 +204,12 @@ const teams = [
     titles: "3 campeonatos",
     history:
       "El Sarape es una de las identidades más queridas de la zona norte. El club debutó en 1970 y ha bordado una historia de campeonatos, rivalidades y noches memorables.",
+    stadiumPhoto: "/estadios/EstadioSaraperos.jpg",
+    playerPhotos: [
+      "/jugadores/Saraperos/AndrésMora.webp",
+      "/jugadores/Saraperos/BrandonVillarreal.webp",
+      "/jugadores/Saraperos/FernandoVillegas.webp",
+    ],
   },
 
   {
@@ -169,6 +223,12 @@ const teams = [
     titles: "5 campeonatos",
     history:
       "El único club binacional del beisbol profesional juega en México y Estados Unidos. Los Tecolotes representan una frontera unida por la pelota desde 1940.",
+    stadiumPhoto: "/estadios/EstadioTecolotes.jpg",
+    playerPhotos: [
+      "/jugadores/Tecolotes/DanielMengden.webp",
+      "/jugadores/Tecolotes/HaroldRamírez.jpg",
+      "/jugadores/Tecolotes/YadielHernández.jpeg",
+    ],
   },
   {
     name: "Toros de Tijuana",
@@ -181,6 +241,12 @@ const teams = [
     titles: "2 campeonatos",
     history:
       "Los Toros encarnan la energía de Tijuana. Con una historia moderna y competitiva, conquistaron la Copa Zaachila en 2017 y 2021.",
+    stadiumPhoto: "/estadios/EstadioToros.jpg",
+    playerPhotos: [
+      "/jugadores/Toros/GabrielGutiérrez.webp",
+      "/jugadores/Toros/IsaacRodríguez.jpg",
+      "/jugadores/Toros/JorgeCantú.jpg",
+    ],
   },
 ];
 
@@ -245,19 +311,17 @@ const challenges = [
 const initialCompletedChallenges: number[] = [];
 /* ===== FIN DE RETOS: ListaRetos y MenuHamburguesa ===== */
 
-/* ===== PERFILES DE CLUB: EquipoDetalle ===== */
+/* ===== PERFILES DE CLUB: EquipoDetalle =====
+   El orden de este arreglo debe coincidir con el de `teams` (mismo índice):
+   0 Acereros · 1 Caliente · 2 Charros · 3 Dorados · 4 Sultanes ·
+   5 Rieleros · 6 Algodoneros · 7 Saraperos · 8 Tecolotes · 9 Toros
+   El orden de `players` debe coincidir con `teams[i].playerPhotos`. */
 const clubProfiles = [
   {
     capacity: "8,500",
     stadiumDetails: "Un parque compacto y ruidoso, renovado para acercar a la afición a cada jugada y aprovechar la intensidad de las noches de Monclova.",
     players: [["Chris Carter", "Bateador de poder"], ["Josh Lowey", "Pitcher histórico"], ["Erick Aybar", "Infielder estelar"]],
     achievements: ["Primer campeonato de LMB en 2019", "Campeón de la Zona Norte en 2019", "Una de las ofensivas más poderosas de su época"],
-  },
-  {
-    capacity: "7,689",
-    stadiumDetails: "Inaugurado en 1932, el Estadio Revolución es uno de los escenarios más antiguos y reconocibles del beisbol mexicano.",
-    players: [["Martín Dihigo", "Leyenda histórica"], ["Jonathan Villar", "Infielder"], ["Nick Torres", "Bateador de poder"]],
-    achievements: ["Campeonatos de liga en 1942 y 1950", "Una de las franquicias fundadoras del norte", "Regreso a una Serie del Rey en 2023"],
   },
   {
     capacity: "4,983",
@@ -278,33 +342,39 @@ const clubProfiles = [
     achievements: ["Regreso de Chihuahua a la LMB en 2024", "Herencia de una de las regiones más beisboleras", "Consolidación de una nueva afición en el norte"],
   },
   {
-    capacity: "6,496",
-    stadiumDetails: "El parque Alberto Romo Chávez conserva el carácter clásico de la liga: tribunas próximas, ambiente familiar y una vista directa del terreno.",
-    players: [["Derek Bryant", "Bateador histórico"], ["Saúl Soto", "Catcher y referente"], ["Ramón Ramírez", "Pitcher"]],
-    achievements: ["Campeón de la LMB en 1978", "Una de las remontadas más recordadas de la liga", "Más de cinco décadas de tradición ferroviaria"],
-  },
-  {
-    capacity: "12,000",
-    stadiumDetails: "El Francisco I. Madero es famoso por el color de su afición y una atmósfera que convierte cada serie en una celebración de Saltillo.",
-    players: [["Andrés Mora", "Bateador legendario"], ["Miguel Flores", "Capitán histórico"], ["Mario Mendoza", "Infielder"]],
-    achievements: ["Bicampeonato en 2009 y 2010", "Campeonato de liga en 1980", "Una de las aficiones más constantes del circuito"],
-  },
-  {
     capacity: "21,803",
     stadiumDetails: "El Estadio Mobil Super es uno de los parques más grandes de México, con graderíos de gran escala y una atmósfera única en juegos nocturnos.",
     players: [["Héctor Espino", "Máximo símbolo"], ["Vinicio Castilla", "Tercera base"], ["Ramiro Peña", "Infielder y capitán"]],
     achievements: ["Diez campeonatos de la Liga Mexicana", "Franquicia activa desde 1939", "Referente histórico del beisbol del norte"],
   },
   {
+    capacity: "6,496",
+    stadiumDetails: "El parque Alberto Romo Chávez conserva el carácter clásico de la liga: tribunas próximas, ambiente familiar y una vista directa del terreno.",
+    players: [["Derek Bryant", "Bateador histórico"], ["Saúl Soto", "Catcher y referente"], ["Ramón Ramírez", "Pitcher"]],
+    achievements: ["Campeón de la LMB en 1978", "Una de las remontadas más recordadas de la liga", "Más de cinco décadas de tradición ferroviaria"],
+  },
+  {
+    capacity: "7,689",
+    stadiumDetails: "Inaugurado en 1932, el Estadio Revolución es uno de los escenarios más antiguos y reconocibles del beisbol mexicano.",
+    players: [["Martín Dihigo", "Leyenda histórica"], ["Jonathan Villar", "Infielder"], ["Nick Torres", "Bateador de poder"]],
+    achievements: ["Campeonatos de liga en 1942 y 1950", "Una de las franquicias fundadoras del norte", "Regreso a una Serie del Rey en 2023"],
+  },
+  {
+    capacity: "12,000",
+    stadiumDetails: "El Francisco I. Madero es famoso por el color de su afición y una atmósfera que convierte cada serie en una celebración de Saltillo.",
+    players: [["Andrés Mora", "Bateador legendario"], ["Brandon Villarreal", "Pitcher"], ["Fernando Villegas", "Outfielder"]],
+    achievements: ["Bicampeonato en 2009 y 2010", "Campeonato de liga en 1980", "Una de las aficiones más constantes del circuito"],
+  },
+  {
     capacity: "5,000 / 6,000",
     stadiumDetails: "La franquicia juega en dos países: el histórico Parque La Junta en Nuevo Laredo y el Uni-Trade Stadium en Laredo, Texas.",
-    players: [["Alejandro Ortiz", "Bateador histórico"], ["Balbino Fuenmayor", "Primera base"], ["Kennys Vargas", "Bateador de poder"]],
+    players: [["Daniel Mengden", "Pitcher abridor"], ["Harold Ramírez", "Outfielder"], ["Yadiel Hernández", "Bateador de poder"]],
     achievements: ["Cinco campeonatos de la LMB", "Único equipo profesional binacional", "Una historia fronteriza que comenzó en 1940"],
   },
   {
     capacity: "17,000",
     stadiumDetails: "El Estadio Chevron combina grandes tribunas, zona de bullpen visible y una de las experiencias de juego más intensas de la frontera.",
-    players: [["Gabriel Gutiérrez", "Catcher histórico"], ["Junior Lake", "Outfielder"], ["Fernando Rodney", "Pitcher cerrador"]],
+    players: [["Gabriel Gutiérrez", "Catcher histórico"], ["Isaac Rodríguez", "Infielder"], ["Jorge Cantú", "Primera base"]],
     achievements: ["Campeón de la LMB en 2017 y 2021", "Remontada histórica en la Serie del Rey 2021", "Protagonista constante de la Zona Norte"],
   },
 ];
@@ -545,6 +615,8 @@ function TeamDetail({ index, back }: { index: number; back: () => void }) {
   const profile = clubProfiles[index];
   const [activePlayer, setActivePlayer] = useState(0);
   const player = profile.players[activePlayer];
+  const stadiumPhoto = team.stadiumPhoto || galleryPhotos[(index % 3) + 1];
+  const playerPhoto = team.playerPhotos?.[activePlayer] || playerPhotos[activePlayer];
   const changePlayer = (direction: number) => {
     setActivePlayer((current) => (current + direction + profile.players.length) % profile.players.length);
   };
@@ -567,7 +639,7 @@ function TeamDetail({ index, back }: { index: number; back: () => void }) {
           <h2>{team.stadium}</h2>
         </div>
         <div className="stadium-feature">
-          <img src={galleryPhotos[(index % 3) + 1]} alt={`Estadio y ambiente de beisbol de ${team.name}`} />
+          <img src={stadiumPhoto} alt={`Estadio y ambiente de beisbol de ${team.name}`} />
           <div className="capacity-badge"><strong>{profile.capacity}</strong><span>aficionados</span></div>
         </div>
         <p>{profile.stadiumDetails}</p>
@@ -579,7 +651,7 @@ function TeamDetail({ index, back }: { index: number; back: () => void }) {
           <h2>Tres nombres que dejaron huella</h2>
         </div>
         <div className="player-carousel">
-          <img src={playerPhotos[activePlayer]} alt="Jugador de beisbol en acción" />
+          <img src={playerPhoto} alt={`${player[0]}, ${player[1]}`} />
           <div className="player-shade" />
           <div className="player-copy">
             <span>Figura {activePlayer + 1} de 3</span>
@@ -1778,6 +1850,10 @@ export default function App() {
   const viewedTeamsRef = useRef(viewedTeams);
   const completedTriviaClubsRef = useRef(completedTriviaClubs);
   const notificationIdRef = useRef(0);
+  /* ===== SCROLL: altura de la lista de equipos al entrar a un detalle ===== */
+  const teamsScrollRef = useRef(0);
+  const restoreTeamsScrollRef = useRef<number | null>(null);
+  /* ===== FIN DE SCROLL ===== */
   completedChallengesRef.current = completedChallenges;
   viewedTeamsRef.current = viewedTeams;
   completedTriviaClubsRef.current = completedTriviaClubs;
@@ -1808,8 +1884,14 @@ export default function App() {
       setViewedTeams(nextViewedTeams);
       if (nextViewedTeams.length >= 5) completeChallenge(3);
     }
+    /* Guarda la altura de la lista para devolverla al salir del detalle */
+    teamsScrollRef.current = window.scrollY;
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     setTeamIndex(index);
+  };
+  const backToTeams = () => {
+    restoreTeamsScrollRef.current = teamsScrollRef.current;
+    setTeamIndex(null);
   };
   /* ===== FIN DE CALLBACK DE Equipos y EquipoDetalle ===== */
 
@@ -1827,10 +1909,13 @@ export default function App() {
 
   /* ===== NAVEGACIÓN: Home, Header, Footer, MenuHamburguesa y Galeria ===== */
   const go = (next: View) => {
+    /* Si sale de un detalle hacia Equipos, vuelve a la altura donde estaba la lista */
+    const returningToTeams = next === "equipos" && teamIndex !== null;
+    if (returningToTeams) restoreTeamsScrollRef.current = teamsScrollRef.current;
     setTeamIndex(null);
     if (next === "galeria") setGalleryPostcard(null);
     setView(next);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!returningToTeams) window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const viewPostcard = (index: number) => {
     setTeamIndex(null);
@@ -1912,6 +1997,17 @@ export default function App() {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
   }, [teamIndex]);
+  /* ===== Al volver del detalle, recupera la altura donde estaba la lista ===== */
+  useLayoutEffect(() => {
+    if (teamIndex !== null) return;
+    const target = restoreTeamsScrollRef.current;
+    if (target === null) return;
+    restoreTeamsScrollRef.current = null;
+    const restore = () => window.scrollTo({ top: target, left: 0, behavior: "auto" });
+    restore();
+    const frame = window.requestAnimationFrame(restore);
+    return () => window.cancelAnimationFrame(frame);
+  }, [teamIndex]);
   useEffect(() => {
     const updateScrollIndicator = () => {
       if (view === "ar") {
@@ -1942,7 +2038,7 @@ export default function App() {
   /* ===== ROUTER INTERNO: inicio y fin de cada componente importado ===== */
   const page = useMemo(() => {
     /* ===== EquipoDetalle: inicio ===== */
-    if (teamIndex !== null) return <EquipoDetalleComponent index={teamIndex} back={() => setTeamIndex(null)} teams={teams} profiles={clubProfiles} galleryPhotos={galleryPhotos} playerPhotos={playerPhotos} />;
+    if (teamIndex !== null) return <EquipoDetalleComponent index={teamIndex} back={backToTeams} teams={teams} profiles={clubProfiles} galleryPhotos={galleryPhotos} playerPhotos={playerPhotos} />;
     /* ===== EquipoDetalle: fin ===== */
 
     /* ===== Home: inicio ===== */

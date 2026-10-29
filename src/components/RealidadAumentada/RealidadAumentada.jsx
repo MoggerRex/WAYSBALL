@@ -82,7 +82,7 @@ function stopMindAR(mindarThree, container) {
     });
 }
 
-export default function RealidadAumentada({ teams, galleryPhotos, unlock }) {
+export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpenTeam }) {
   const containerRef = useRef(null);
   const mindarRef = useRef(null);
   const visibleTargetsRef = useRef(new Set());
@@ -297,6 +297,14 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock }) {
 
       <div className="camera-overlay" />
 
+      {camera === "loading" && (
+        <div className="ar-loading" role="status" aria-live="polite">
+          <span className="ar-loading-spinner" aria-hidden="true" />
+          <strong>Cargando</strong>
+          <small>Preparando cámara y modelos 3D…</small>
+        </div>
+      )}
+
       {recognizedTeam && particlesEnabled && (
         <div className="ar-particle-field" aria-hidden="true">
           {Array.from({ length: 16 }, (_, index) => (
@@ -305,10 +313,14 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock }) {
         </div>
       )}
 
-      <div className={`scan-frame ${recognizedTeam ? "detected" : ""}`}>
-        <i /><i /><i /><i />
-        <span>{recognizedTeam ? "Logo detectado" : "Centra el logo dentro del marco"}</span>
-      </div>
+      {/* El marco de escaneo solo se muestra mientras se busca el logo:
+          al detectarlo se oculta para no tapar el modelo ni la tarjeta del club. */}
+      {!recognizedTeam && (
+        <div className="scan-frame">
+          <i /><i /><i /><i />
+          <span>Centra el logo dentro del marco</span>
+        </div>
+      )}
 
       {recognizedTeam && (
         <div className="ar-anchor-card">
@@ -318,6 +330,13 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock }) {
             <strong>{recognizedTeam.name}</strong>
             <small>Anclaje listo para modelo 3D</small>
           </div>
+          <button
+            className="ar-team-button"
+            type="button"
+            onClick={() => onOpenTeam?.(recognizedTeam.targetIndex)}
+          >
+            Ver equipo <Icon name="arrow" size={16} />
+          </button>
         </div>
       )}
 
@@ -341,8 +360,8 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock }) {
         </p>
         
         {camera !== "active" && (
-          <button className="primary-button light-button" disabled={libraryStatus === "loading"} onClick={libraryStatus === "error" ? retryLibrary : startAR}>
-            <Icon name="camera" /> {libraryStatus === "loading" ? "Preparando AR..." : libraryStatus === "error" ? "Reintentar carga" : camera === "error" ? "Reintentar cámara" : "Activar cámara"}
+          <button className="primary-button light-button" disabled={libraryStatus === "loading" || camera === "loading"} onClick={libraryStatus === "error" ? retryLibrary : startAR}>
+            <Icon name="camera" /> {libraryStatus === "loading" ? "Preparando AR..." : libraryStatus === "error" ? "Reintentar carga" : camera === "error" ? "Reintentar cámara" : camera === "loading" ? "Cargando..." : "Activar cámara"}
           </button>
         )}
 

@@ -9,6 +9,10 @@
 .recognition-canvas { display: none; }
 .camera-page > img { z-index: 1; }
 .camera-overlay { background: linear-gradient(180deg, rgba(0,28,45,.25), transparent 35%, rgba(0,28,45,.75)); inset: 0; pointer-events: none; position: absolute; z-index: 2; }
+.ar-loading { align-items: center; background: rgba(0,22,36,.88); display: flex; flex-direction: column; gap: 14px; inset: 0; justify-content: center; position: absolute; z-index: 9; }
+.ar-loading-spinner { animation: ar-spin .9s linear infinite; border: 3px solid rgba(238,237,238,.18); border-radius: 50%; border-top-color: var(--red); height: 54px; width: 54px; }
+.ar-loading strong { color: var(--white); font-family: var(--font-display); font-size: 15px; letter-spacing: 1.4px; text-transform: uppercase; }
+.ar-loading small { color: var(--mist); font-size: 11px; }
 .ar-particle-field { height: 330px; left: 50%; pointer-events: none; position: absolute; top: 40px; transform: translateX(-50%); width: min(360px, 90vw); z-index: 4; }
 .ar-particle-field > i { animation: ember-rise 1.8s ease-in infinite; background: radial-gradient(ellipse, #fff6b0 0%, #ff9b35 38%, #e84922 72%, transparent 100%); border-radius: 55% 45% 60% 40%; filter: drop-shadow(0 0 7px rgba(255,112,37,.8)); height: 15px; left: 50%; position: absolute; top: 65%; width: 9px; }
 .ar-particle-field > i.smoke { animation: smoke-drift 3.1s ease-out infinite; background: radial-gradient(ellipse, rgba(205,213,207,.56), rgba(117,133,132,.2) 55%, transparent 75%); border-radius: 50%; filter: blur(5px); height: 35px; width: 29px; }
@@ -41,19 +45,22 @@
 .scan-frame i:nth-child(3) { border-width: 0 0 2px 2px; bottom: 0; left: 0; }
 .scan-frame i:nth-child(4) { border-width: 0 2px 2px 0; bottom: 0; right: 0; }
 .scan-frame > span { background: rgba(0,28,45,.72); bottom: -32px; font-size: 10px; left: 50%; padding: 6px 9px; position: absolute; transform: translateX(-50%); white-space: nowrap; }
-.scan-frame.detected i { border-color: #70d68b; filter: drop-shadow(0 0 5px rgba(112,214,139,.55)); }
-.scan-frame.detected > span { background: #2f7a54; }
 .ar-anchor-card { align-items: center; background: rgba(0,42,68,.94); border: 1px solid rgba(112,214,139,.65); bottom: 150px; display: grid; gap: 13px; grid-template-columns: 58px 1fr; left: 18px; padding: 12px; position: absolute; right: 18px; z-index: 4; }
 .ar-anchor-card > img { height: 54px; object-fit: contain; width: 54px; }
 .ar-anchor-card span, .ar-anchor-card strong, .ar-anchor-card small { display: block; }
 .ar-anchor-card span { color: #84d296; font-size: 8px; letter-spacing: .8px; text-transform: uppercase; }
 .ar-anchor-card strong { font-family: var(--font-display); font-size: 15px; line-height: 1.05; margin: 4px 0; text-transform: uppercase; }
 .ar-anchor-card small { color: var(--mist); font-size: 9px; }
+.ar-team-button { align-items: center; background: #2f7a54; border: 1px solid #84d296; border-radius: 3px; color: #fff; cursor: pointer; display: flex; font-family: var(--font-display); font-size: 12px; font-weight: 800; gap: 8px; grid-column: 1 / -1; justify-content: center; letter-spacing: .6px; padding: 10px 14px; text-transform: uppercase; transition: background .2s ease; }
+.ar-team-button:hover { background: #38925f; }
+.ar-team-button:active { transform: translateY(1px); }
+.ar-team-button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .camera-copy h1 { font-size: 35px; line-height: .98; margin: 8px 0 12px; }
 .camera-copy p { color: var(--mist); font-size: 13px; line-height: 1.5; }
 .scanning i { animation: pulse 1s infinite; background: var(--red); border-radius: 50%; height: 10px; width: 10px; }
 .scanning.found i { background: #70d68b; }
 @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(224,43,17,.15); } }
+@keyframes ar-spin { to { transform: rotate(360deg); } }
 @keyframes ember-rise { 0% { opacity: 0; transform: translate(0, 12px) scale(.45) rotate(0); } 18% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--drift-x, 0), -105px) scale(.15) rotate(45deg); } }
 @keyframes smoke-drift { 0% { opacity: 0; transform: translate(0, 12px) scale(.45); } 20% { opacity: .55; } 100% { opacity: 0; transform: translate(var(--drift-x, 0), -95px) scale(1.7); } }
 

@@ -1895,6 +1895,14 @@ export default function App() {
   };
   /* ===== FIN DE CALLBACK DE Equipos y EquipoDetalle ===== */
 
+  /* ===== CALLBACK DE RealidadAumentada: abrir el equipo escaneado ===== */
+  const openTeamFromAR = (index: number) => {
+    if (!Number.isInteger(index) || index < 0 || index >= teams.length) return;
+    setView("equipos");
+    selectTeam(index);
+  };
+  /* ===== FIN DE CALLBACK DE RealidadAumentada ===== */
+
   /* ===== CALLBACK DE Trivia ===== */
   const completeTriviaClub = (clubIndex: number, perfectAttempt: boolean) => {
     if (perfectAttempt) completeChallenge(1);
@@ -2054,7 +2062,7 @@ export default function App() {
     /* ===== Trivia: FIN ===== */
 
     /* ===== RealidadAumentada: INICIO ===== */
-    if (view === "ar") return <RealidadAumentadaComponent teams={teams} galleryPhotos={galleryPhotos} unlock={() => completeChallenge(5)} />;
+    if (view === "ar") return <RealidadAumentadaComponent teams={teams} galleryPhotos={galleryPhotos} unlock={() => completeChallenge(5)} onOpenTeam={openTeamFromAR} />;
     /* ===== RealidadAumentada: FIN ===== */
 
     /* ===== MiniJuego: INICIO ===== */

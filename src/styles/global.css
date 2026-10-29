@@ -14,14 +14,31 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --header-height: calc(68px + var(--safe-top));
-  --footer-height: calc(84px + var(--safe-bottom));
+  --footer-height: calc(64px + var(--safe-bottom));
 }
 
 * { box-sizing: border-box; }
 html { background: var(--navy-black); scrollbar-width: none; }
 html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; height: 0; width: 0; }
 body { margin: 0; min-width: 320px; background: var(--navy); color: var(--white); font-family: var(--font-body); }
-@media (max-width: 719px) { html, body { background: #d2dbeb; } }
+@media (max-width: 719px) {
+  /* El fondo del documento usa el color del footer: así la barra del navegador
+     del teléfono (y las áreas seguras) no se ven oscuras. */
+  html, body { background: #d2dbeb; }
+  /* Tiras fijas que cubren el área segura de arriba (notch / barra de estado)
+     y la de abajo (home indicator), siempre en el tono del header/footer. */
+  body::before, body::after {
+    background: #d2dbeb;
+    content: "";
+    left: 0;
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    z-index: 60;
+  }
+  body::before { height: calc(var(--safe-top) + 1px); top: 0; }
+  body::after { bottom: 0; height: calc(var(--safe-bottom) + 1px); }
+}
 @media (min-width: 720px) { body { background: radial-gradient(circle at top, #0c5277, var(--navy-black) 65%); } }
 button { color: inherit; font: inherit; }
 button:focus-visible { outline: 3px solid #f3c543; outline-offset: 3px; }

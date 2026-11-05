@@ -82,7 +82,7 @@ function stopMindAR(mindarThree, container) {
     });
 }
 
-export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpenTeam }) {
+export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpenTeam, onTeamRecognized }) {
   const containerRef = useRef(null);
   const mindarRef = useRef(null);
   const visibleTargetsRef = useRef(new Set());
@@ -245,6 +245,7 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpen
         anchor.onTargetFound = () => {
           visibleTargetsRef.current.add(targetIndex);
           setRecognizedTeam({ ...team, targetIndex });
+          onTeamRecognized?.(targetIndex);
           if (!rewardedRef.current) {
             rewardedRef.current = true;
             unlockRef.current();

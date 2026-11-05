@@ -290,6 +290,27 @@ galleryItems.push(
     video: "https://upload.wikimedia.org/wikipedia/commons/3/34/Steven_Brault%27s_delivery.webm",
   },
 );
+
+galleryItems.push(
+  {
+    title: "Mascota de Sultanes",
+    description: "La mascota de Monterrey, lista para animar cada entrada desde el diamante.",
+    image: "/Mascotas/SultanesFurro.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Tecolotes",
+    description: "El representante de los Dos Laredos acompaña esta postal desbloqueada con realidad aumentada.",
+    image: "/Mascotas/TecolotesFurro.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Toros",
+    description: "La fuerza de Tijuana llega a la colección con esta postal de su mascota.",
+    image: "/Mascotas/TorosFurro.jpeg",
+    type: "image",
+  },
+);
 /* ===== FIN DE DATOS DE POSTALES ===== */
 
 /* ===== TEXTOS Y RECOMPENSAS: ListaRetos y MenuHamburguesa ===== */
@@ -306,6 +327,9 @@ const challenges = [
   { title: "Guardia del plato", description: "Alcanza una puntuación de 1,000 puntos en el minijuego.", reward: "Guardia del plato" },
   { title: "Puntaje de 1500", description: "Alcanza una puntuación de 1500 puntos en el minijuego.", reward: "Movimiento en la lomita" },
   { title: "Archivo Waysball", description: "Completa los once retos anteriores y termina toda la colección.", reward: "El lanzamiento" },
+  { title: "Escanea el logo de los Sultanes", description: "Reconoce el marcador de los Sultanes de Monterrey en realidad aumentada.", reward: "Mascota de Sultanes" },
+  { title: "Escanea el logo de los Tecolotes", description: "Reconoce el marcador de los Tecolotes de los Dos Laredos en realidad aumentada.", reward: "Mascota de Tecolotes" },
+  { title: "Escanea el logo de los Toros", description: "Reconoce el marcador de los Toros de Tijuana en realidad aumentada.", reward: "Mascota de Toros" },
 ];
 
 const initialCompletedChallenges: number[] = [];
@@ -1901,6 +1925,11 @@ export default function App() {
     setView("equipos");
     selectTeam(index);
   };
+  const recognizeTeamInAR = (teamIndex: number) => {
+    const challengeByTeam: Record<number, number> = { 4: 12, 8: 13, 9: 14 };
+    const challengeIndex = challengeByTeam[teamIndex];
+    if (challengeIndex !== undefined) completeChallenge(challengeIndex);
+  };
   /* ===== FIN DE CALLBACK DE RealidadAumentada ===== */
 
   /* ===== CALLBACK DE Trivia ===== */
@@ -2062,7 +2091,7 @@ export default function App() {
     /* ===== Trivia: FIN ===== */
 
     /* ===== RealidadAumentada: INICIO ===== */
-    if (view === "ar") return <RealidadAumentadaComponent teams={teams} galleryPhotos={galleryPhotos} unlock={() => completeChallenge(5)} onOpenTeam={openTeamFromAR} />;
+    if (view === "ar") return <RealidadAumentadaComponent teams={teams} galleryPhotos={galleryPhotos} unlock={() => completeChallenge(5)} onOpenTeam={openTeamFromAR} onTeamRecognized={recognizeTeamInAR} />;
     /* ===== RealidadAumentada: FIN ===== */
 
     /* ===== MiniJuego: INICIO ===== */

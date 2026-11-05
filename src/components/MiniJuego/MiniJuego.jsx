@@ -1,9 +1,172 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Gamepad2, Pause, RefreshCw, TrendingUp } from "lucide-react";
 import Icon from "../Icon/Icon";
 import "./MiniJuego.css";
 
 const emptyStats = { maxScore: 0, totalPoints: 0, totalStrikes: 0 };
+const PITCH_RELEASE_SECONDS = 56 / 30;
+const BAT_SWING_DURATION = 0.7;
+const BAT_SWING_END_FRAME = 78;
+
+function GamePlayers({ onReady, onError }) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    let renderer;
+    let resizeObserver;
+    let animationFrame;
+    const mixers = [];
+
+    const initializePlayers = async () => {
+      try {
+        const [THREE, { FBXLoader }] = await Promise.all([
+          import("https://cdn.jsdelivr.net/npm/three@0.160.0/+esm"),
+          import("https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/FBXLoader.js/+esm"),
+        ]);
+        if (cancelled || !containerRef.current) return;
+
+        const container = containerRef.current;
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 100);
+        camera.position.set(0, 0, 20);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
+        scene.add(ambientLight);
+        const keyLight = new THREE.DirectionalLight(0xffffff, 2);
+        keyLight.position.set(-3, 8, 10);
+        scene.add(keyLight);
+
+        renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setClearColor(0x000000, 0);
+        container.appendChild(renderer.domElement);
+
+        const resize = () => {
+          const { width, height } = container.getBoundingClientRect();
+          if (!width || !height) return;
+          const aspect = width / height;
+          camera.left = -5 * aspect;
+          camera.right = 5 * aspect;
+          camera.top = 5;
+          camera.bottom = -5;
+          camera.updateProjectionMatrix();
+          renderer.setSize(width, height, false);
+        };
+        resize();
+        resizeObserver = new ResizeObserver(resize);
+        resizeObserver.observe(container);
+
+        const loader = new FBXLoader();
+        const players = [
+          { file: "pi_sultanes.fbx", x: 0, y: 3.0, height: 1.15, role: "pitcher" },
+          { file: "pi_caliente.fbx", x: -2.2, y: -4.65, height: 5.1, role: "batter" },
+        ];
+        const loadedPlayers = await Promise.all(players.map(({ file, x, y, height, role }) =>
+          new Promise((resolve, reject) => {
+            loader.load(
+              `${import.meta.env.BASE_URL}Animaciones/${file}`,
+              (model) => resolve({ model, x, y, height, role }),
+              undefined,
+              reject,
+            );
+          }),
+        ));
+        if (cancelled) return;
+
+        const actions = {};
+        loadedPlayers.forEach(({ model, x, y, height, role }) => {
+          model.traverse((object) => {
+            if (!object.isMesh) return;
+            const materials = Array.isArray(object.material) ? object.material : [object.material];
+            materials.forEach((material) => {
+              if (!material) return;
+              material.alphaMap = null;
+              material.opacity = 1;
+              material.transparent = false;
+              material.alphaTest = 0;
+              material.depthWrite = true;
+              material.needsUpdate = true;
+            });
+          });
+          const bounds = new THREE.Box3().setFromObject(model);
+          const dimensions = bounds.getSize(new THREE.Vector3());
+          if (!Number.isFinite(dimensions.y) || dimensions.y <= 0) {
+            throw new Error(`El modelo ${role} no tiene una altura válida.`);
+          }
+          const scale = height / dimensions.y;
+          model.scale.setScalar(scale);
+          if (role === "batter") model.rotation.y = Math.PI;
+          const center = bounds.getCenter(new THREE.Vector3());
+          model.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale);
+
+          const player = new THREE.Group();
+          player.position.set(x, y, 0);
+          player.add(model);
+          scene.add(player);
+
+          const mixer = new THREE.AnimationMixer(model);
+          mixers.push(mixer);
+          if (model.animations.length > 0) {
+            const clip = role === "batter"
+              ? THREE.AnimationUtils.subclip(model.animations[0], "batting-swing", 0, BAT_SWING_END_FRAME, 30)
+              : model.animations[0];
+            if (role === "batter") {
+              clip.tracks = clip.tracks.filter((track) => track.name !== "mixamorigHips.position");
+            }
+            actions[role] = mixer.clipAction(clip);
+          }
+        });
+
+        let previousTime = 0;
+        const render = (time) => {
+          if (cancelled) return;
+          const delta = previousTime ? Math.min((time - previousTime) / 1000, 0.05) : 0;
+          previousTime = time;
+          mixers.forEach((mixer) => mixer.update(delta));
+          renderer.render(scene, camera);
+          animationFrame = window.requestAnimationFrame(render);
+        };
+        animationFrame = window.requestAnimationFrame(render);
+
+        const play = (action, duration) => {
+          if (!action) return;
+          action.reset();
+          action.setLoop(THREE.LoopOnce, 1);
+          action.clampWhenFinished = false;
+          if (duration) action.setDuration(duration);
+          action.play();
+        };
+        onReady({
+          pitch: () => play(actions.pitcher),
+          swing: () => play(actions.batter, BAT_SWING_DURATION),
+        });
+        const missingAnimations = loadedPlayers
+          .filter(({ model }) => model.animations.length === 0)
+          .map(({ role }) => role);
+        if (missingAnimations.length) {
+          onError(`El modelo ${missingAnimations.join(" y ")} no contiene una animación.`);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          onError(error instanceof Error ? error.message : "No se pudieron cargar los modelos del minijuego.");
+        }
+      }
+    };
+
+    initializePlayers();
+    return () => {
+      cancelled = true;
+      onReady(null);
+      resizeObserver?.disconnect();
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      mixers.forEach((mixer) => mixer.stopAllAction());
+      renderer?.dispose();
+      renderer?.domElement.remove();
+    };
+  }, [onError, onReady]);
+
+  return <div ref={containerRef} className="game-players" aria-hidden="true" />;
+}
 
 export default function MiniJuego({ unlock, unlockHighScore, unlockPostal11, challengeCompleted }) {
   const [countdownNumber, setCountdownNumber] = useState(null);
@@ -15,6 +178,7 @@ export default function MiniJuego({ unlock, unlockHighScore, unlockPostal11, cha
   const [showInstructions, setShowInstructions] = useState(true);
   const [showVictory, setShowVictory] = useState(false);
   const [pauseView, setPauseView] = useState(null);
+  const [playersError, setPlayersError] = useState("");
   const [stats, setStats] = useState(() => {
     try { return { ...emptyStats, ...JSON.parse(window.localStorage.getItem("waysball-game-stats") || "{}") }; }
     catch { return emptyStats; }
@@ -25,6 +189,14 @@ export default function MiniJuego({ unlock, unlockHighScore, unlockPostal11, cha
   const timersRef = useRef([]);
   const pitchBallRef = useRef(null);
   const hitZoneRef = useRef(null);
+  const playerAnimationsRef = useRef(null);
+
+  const handlePlayersReady = useCallback((animations) => {
+    playerAnimationsRef.current = animations;
+  }, []);
+  const handlePlayersError = useCallback((error) => {
+    setPlayersError(error);
+  }, []);
 
   const clearTimers = () => { timersRef.current.forEach(window.clearTimeout); timersRef.current = []; };
   const later = (callback, delay) => { const timer = window.setTimeout(callback, delay); timersRef.current.push(timer); };
@@ -34,9 +206,14 @@ export default function MiniJuego({ unlock, unlockHighScore, unlockPostal11, cha
     setPhase("waiting");
     setMessage("Espera el lanzamiento");
     later(() => {
-      setPhase("pitching");
-      setMessage("Sigue la pelota");
-      later(() => resolvePitch(false), 1600);
+      setPhase("windup");
+      setMessage("El lanzador se prepara");
+      playerAnimationsRef.current?.pitch();
+      later(() => {
+        setPhase("pitching");
+        setMessage("Sigue la pelota");
+        later(() => resolvePitch(false), 1600);
+      }, PITCH_RELEASE_SECONDS * 1000);
     }, 750 + Math.random() * 900);
   };
 
@@ -96,6 +273,7 @@ export default function MiniJuego({ unlock, unlockHighScore, unlockPostal11, cha
   const swing = () => {
     if (swinging || (phase !== "waiting" && phase !== "pitching")) return;
     setSwinging(true);
+    playerAnimationsRef.current?.swing();
     if (phase === "waiting") resolvePitch(false, "Muy pronto. Espera a que salga la pelota.");
     else {
       const ballBounds = pitchBallRef.current?.getBoundingClientRect();
@@ -141,9 +319,11 @@ export default function MiniJuego({ unlock, unlockHighScore, unlockPostal11, cha
       </div>
 
       <div className="ballpark">
-        <div ref={hitZoneRef} className="hit-zone" aria-hidden="true" />
+        <GamePlayers onReady={handlePlayersReady} onError={handlePlayersError} />
+        <div ref={hitZoneRef} className="hit-zone" aria-hidden="true">
+          <i /><i /><i /><i /><b />
+        </div>
         <div ref={pitchBallRef} className={`pitch-ball ${phase === "pitching" ? "thrown" : ""}`} />
-        <div className={`batter ${swinging ? "swing" : ""}`}><i /><b /><span /></div>
         
         {phase === "countdown" && countdownNumber && (
           <div className="countdown-overlay">
@@ -154,6 +334,7 @@ export default function MiniJuego({ unlock, unlockHighScore, unlockPostal11, cha
         )}
 
         <div className="game-instruction">{message}</div>
+        {playersError && <div className="game-player-error" role="status">{playersError}</div>}
       </div>
 
       <section className="game-controls">

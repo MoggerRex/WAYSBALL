@@ -1,9 +1,18 @@
 .game-page { background: var(--navy-dark); color: var(--white); display: flex; flex-direction: column; height: calc(100dvh - var(--header-height) - var(--footer-height)); overflow: hidden; position: relative; }
 .scoreboard { align-items: center; background: var(--navy-dark); color: white; display: grid; flex: none; grid-template-columns: 1fr auto 1fr; padding: 14px 24px; position: relative; z-index: 4; }
-.ballpark { background: linear-gradient(180deg, rgba(0,28,45,.08), rgba(0,28,45,.2)), url("/game/field.jpg") center 78% / cover no-repeat; flex: 1; min-height: 0; overflow: hidden; position: relative; }
-.hit-zone { height: 21.5%; left: 36.5%; pointer-events: none; position: absolute; top: 71%; width: 34%; }
+.ballpark { background: linear-gradient(180deg, rgba(0,28,45,.04), rgba(0,28,45,.12)), url("/game/FondoMinijuegoNuevo.jpeg") center 72% / cover no-repeat; flex: 1; min-height: 0; overflow: hidden; position: relative; }
+.game-players { inset: 0; pointer-events: none; position: absolute; z-index: 1; }
+.game-players canvas { display: block; height: 100%; width: 100%; }
+.hit-zone { height: 21.5%; left: 36.5%; pointer-events: none; position: absolute; top: 71%; width: 34%; z-index: 2; }
+.hit-zone i { border-color: rgba(224,43,17,.92); border-style: solid; filter: drop-shadow(0 1px 2px rgba(0,0,0,.8)); height: 34%; position: absolute; width: 30%; }
+.hit-zone i:nth-child(1) { border-width: 3px 0 0 3px; left: 0; top: 0; }
+.hit-zone i:nth-child(2) { border-width: 3px 3px 0 0; right: 0; top: 0; }
+.hit-zone i:nth-child(3) { border-width: 0 0 3px 3px; bottom: 0; left: 0; }
+.hit-zone i:nth-child(4) { border-width: 0 3px 3px 0; bottom: 0; right: 0; }
+.hit-zone b { background: rgba(224,43,17,.9); filter: drop-shadow(0 1px 2px rgba(0,0,0,.8)); height: 18px; left: 50%; position: absolute; top: 50%; transform: translate(-50%,-50%); width: 2px; }
+.hit-zone b:after { background: inherit; content: ""; height: 2px; left: -8px; position: absolute; top: 8px; width: 18px; }
 .pitch-ball { background: white; border: 1px solid #be1e24; border-radius: 50%; height: 9px; left: 53%; opacity: 0; position: absolute; top: 34%; width: 9px; }
-.pitch-ball.thrown { animation: pitch 1.6s linear forwards; opacity: 1; }
+.pitch-ball.thrown { animation: pitch 1.6s linear forwards; opacity: 1; z-index: 3; }
 .game-controls { bottom: 18px; position: absolute; right: 8px; width: 105px; z-index: 5; }
 .game-controls .primary-button { margin: 0; max-width: 105px; padding: 0 8px; }
 .swing-button { background: var(--red); border: 6px solid rgba(239,201,193,.85); border-radius: 50%; box-shadow: 0 10px 26px rgba(0,28,45,.35); color: white; cursor: pointer; display: block; font-family: var(--font-display); height: 105px; margin: 0; text-transform: uppercase; width: 105px; }
@@ -18,12 +27,8 @@
 .ballpark:before { background: linear-gradient(180deg, rgba(0,28,45,.12), transparent 45%, rgba(0,28,45,.16)); content: ""; inset: 0; pointer-events: none; position: absolute; }
 .pitch-ball { transform: translateX(-50%); box-shadow: 0 2px 7px rgba(0,0,0,.4); }
 @keyframes pitch { to { height: 28px; left: 50%; top: 96%; width: 28px; } }
-.batter { bottom: 28px; height: 125px; left: 22%; pointer-events: none; position: absolute; width: 75px; z-index: 3; }
-.batter i, .batter b { display: none; }
-.batter span { background: linear-gradient(90deg,#9e6536,#d49a5a); border-radius: 7px; box-shadow: 0 3px 7px rgba(0,0,0,.25); height: 112px; left: 33px; position: absolute; top: 0; transform: rotate(-24deg); transform-origin: bottom; width: 10px; }
-.batter.swing span { animation: bat .38s ease-out; }
-@keyframes bat { 50% { transform: rotate(75deg); } }
-.game-instruction { background: rgba(0,28,45,.8); color: white; font-size: 10px; left: 50%; padding: 7px 12px; position: absolute; top: 16px; transform: translateX(-50%); text-transform: uppercase; white-space: nowrap; }
+.game-instruction { background: rgba(0,28,45,.8); color: white; font-size: 10px; left: 50%; padding: 7px 12px; position: absolute; top: 16px; transform: translateX(-50%); text-transform: uppercase; white-space: nowrap; z-index: 4; }
+.game-player-error { background: rgba(110,24,16,.9); bottom: 10px; color: white; font-size: 10px; left: 10px; max-width: 65%; padding: 7px 10px; position: absolute; z-index: 4; }
 .game-modal-layer { align-items: center; background: rgba(0,18,30,.84); bottom: var(--footer-height); display: flex; justify-content: center; left: 50%; max-width: 520px; overflow-y: auto; padding: 24px; position: fixed; top: var(--header-height); transform: translateX(-50%); width: 100%; z-index: 24; }
 .game-modal { background: var(--paper); color: var(--ink); flex: none; max-width: 420px; padding: 30px 24px 24px; width: 100%; }
 .game-modal h2 { font-family: var(--font-display); font-size: 34px; line-height: 1; margin: 8px 0 15px; text-transform: uppercase; }

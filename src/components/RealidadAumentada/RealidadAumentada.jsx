@@ -61,6 +61,17 @@ function loadMindARScript() {
   return mindArScriptPromise;
 }
 
+/* Convierte un dataURL en File para poder compartirlo con el menú del sistema
+   (en iOS es la forma más fiable de "Guardar imagen" en Fotos). */
+function dataUrlToFile(dataUrl, fileName) {
+  const [header, base64] = dataUrl.split(",");
+  const mime = header.match(/:(.*?);/)?.[1] ?? "image/jpeg";
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return new File([bytes], fileName, { type: mime });
+}
+
 function stopMindAR(mindarThree, container) {
   if (!mindarThree) return Promise.resolve();
   mindarThree.renderer?.setAnimationLoop(null);
@@ -82,11 +93,12 @@ function stopMindAR(mindarThree, container) {
     });
 }
 
-export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpenTeam, onTeamRecognized }) {
+export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpenTeam, onTeamRecognized, onSavePhoto }) {
   const containerRef = useRef(null);
   const mindarRef = useRef(null);
   const visibleTargetsRef = useRef(new Set());
   const rewardedRef = useRef(false);
+  const captureRequestRef = useRef(false);
   const unlockRef = useRef(unlock);
   unlockRef.current = unlock;
 
@@ -97,6 +109,14 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpen
   const [recognitionStatus, setRecognitionStatus] = useState("idle");
   const [recognizedTeam, setRecognizedTeam] = useState(null);
   const [particlesEnabled, setParticlesEnabled] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [photoNote, setPhotoNote] = useState("");
+  const [photoSaved, setPhotoSaved] = useState(false);
+  const [flashKey, setFlashKey] = useState(0);
+
+  const canSharePhoto = typeof navigator !== "undefined"
+    && typeof navigator.share === "function"
+    && typeof navigator.canShare === "function";
 
   useEffect(() => {
     if (!recognizedTeam) setParticlesEnabled(false);
@@ -147,6 +167,93 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpen
         setLibraryError(error instanceof Error ? error.message : "No se pudieron preparar los recursos de AR.");
         setLibraryStatus("error");
       });
+  };
+
+  /* Compone la foto: fondo de la cámara (recortado igual que en pantalla, con
+     "cover") + el canvas del renderer 3D encima. Devuelve un dataURL JPEG. */
+  const drawArPhoto = () => {
+    const mindarThree = mindarRef.current;
+    const container = containerRef.current;
+    if (!mindarThree || !container) return null;
+    const video = mindarThree.video instanceof HTMLVideoElement
+      ? mindarThree.video
+      : container.querySelector("video");
+    const threeCanvas = mindarThree.renderer?.domElement;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    if (!width || !height || !video?.videoWidth || !video?.videoHeight) return null;
+
+    const scale = Math.min(window.devicePixelRatio || 1, 2);
+    const output = document.createElement("canvas");
+    output.width = Math.max(1, Math.round(width * scale));
+    output.height = Math.max(1, Math.round(height * scale));
+    const context = output.getContext("2d");
+    if (!context) return null;
+
+    context.fillStyle = "#001c2d";
+    context.fillRect(0, 0, output.width, output.height);
+
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    const targetRatio = width / height;
+    const videoRatio = videoWidth / videoHeight;
+    let sourceX = 0;
+    let sourceY = 0;
+    let sourceWidth = videoWidth;
+    let sourceHeight = videoHeight;
+    if (videoRatio > targetRatio) {
+      sourceWidth = videoHeight * targetRatio;
+      sourceX = (videoWidth - sourceWidth) / 2;
+    } else if (videoRatio < targetRatio) {
+      sourceHeight = videoWidth / targetRatio;
+      sourceY = (videoHeight - sourceHeight) / 2;
+    }
+    context.drawImage(video, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, output.width, output.height);
+
+    if (threeCanvas && threeCanvas.width > 0 && threeCanvas.height > 0) {
+      context.drawImage(threeCanvas, 0, 0, output.width, output.height);
+    }
+
+    return output.toDataURL("image/jpeg", 0.92);
+  };
+
+  /* La captura se hace dentro del bucle de render (justo después de dibujar):
+     así el buffer del canvas WebGL todavía tiene el modelo 3D y no sale vacío. */
+  const takePhoto = () => {
+    if (camera !== "active" || !mindarRef.current) return;
+    setFlashKey((key) => key + 1);
+    setPhotoNote("");
+    setPhotoSaved(false);
+    captureRequestRef.current = true;
+  };
+
+  /* Guardar = enviar la foto a la galería de Waysball (sección "Mis fotos").
+     Ya no se descarga al carrete: así el navegador no muestra el aviso de
+     descarga y la foto queda dentro de la app. */
+  const savePhotoToGallery = () => {
+    if (!photo || photoSaved) return;
+    onSavePhoto?.({ dataUrl: photo, teamName: recognizedTeam?.name ?? null });
+    setPhotoSaved(true);
+    setPhotoNote('Foto guardada en la sección "Mis fotos" de la galería Waysball.');
+  };
+
+  const sharePhoto = async () => {
+    if (!photo) return;
+    try {
+      const file = dataUrlToFile(photo, `waysball-ar-${Date.now()}.jpg`);
+      await navigator.share({ files: [file], title: "Waysball · Realidad Aumentada" });
+      setPhotoNote("Foto compartida.");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      console.warn("No se pudo compartir la foto:", error);
+      setPhotoNote("No se pudo abrir el menú de compartir. Usa Guardar.");
+    }
+  };
+
+  const closePhoto = () => {
+    setPhoto(null);
+    setPhotoNote("");
+    setPhotoSaved(false);
   };
 
   const startAR = async () => {
@@ -270,6 +377,11 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpen
         const delta = animationClock.getDelta();
         animationMixers.forEach((animationMixer) => animationMixer.update(delta));
         renderer.render(scene, arCamera);
+        if (captureRequestRef.current) {
+          captureRequestRef.current = false;
+          const dataUrl = drawArPhoto();
+          if (dataUrl) setPhoto(dataUrl);
+        }
       });
     } catch (error) {
       console.error(error);
@@ -341,7 +453,7 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpen
         </div>
       )}
 
-      <div className="camera-copy">
+      <div className={`camera-copy ${camera === "active" ? "live" : ""}`}>
         <span className="eyebrow light">Ballpark AR · MindAR</span>
         {camera !== "active" && <h1>El juego sale<br />de la pantalla.</h1>}
         <p role={camera === "error" || libraryStatus === "error" ? "alert" : "status"} aria-live="polite">
@@ -372,6 +484,42 @@ export default function RealidadAumentada({ teams, galleryPhotos, unlock, onOpen
           </div>
         )}
       </div>
+
+      {camera === "active" && (
+        <button
+          className="camera-shutter"
+          type="button"
+          onClick={takePhoto}
+          aria-label="Tomar foto"
+          title="Tomar foto"
+        >
+          <span aria-hidden="true" />
+        </button>
+      )}
+
+      {flashKey > 0 && <span className="camera-flash" key={flashKey} aria-hidden="true" />}
+
+      {photo && (
+        <div className="photo-preview" role="dialog" aria-modal="true" aria-label="Foto tomada">
+          <img src={photo} alt="Foto tomada en realidad aumentada" />
+          <div className="photo-preview-actions">
+            {canSharePhoto && (
+              <button type="button" onClick={sharePhoto}>
+                Compartir
+              </button>
+            )}
+            <button type="button" onClick={savePhotoToGallery} disabled={photoSaved}>
+              {photoSaved ? "Guardada" : "Guardar"}
+            </button>
+            <button className="ghost" type="button" onClick={closePhoto}>
+              Cerrar
+            </button>
+          </div>
+          <small className={`photo-preview-note ${photoSaved ? "saved" : ""}`} role="status" aria-live="polite">
+            {photoNote || 'Guarda la foto en la sección "Mis fotos" de la galería Waysball.'}
+          </small>
+        </div>
+      )}
 
       {camera === "active" && recognizedTeam && (
         <button

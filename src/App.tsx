@@ -12,6 +12,7 @@ import GaleriaComponent from "./components/Galeria/Galeria";
 import GaleriaDetalleComponent from "./components/GaleriaDetalle/GaleriaDetalle";
 import RealidadAumentadaComponent from "./components/RealidadAumentada/RealidadAumentada";
 import MiniJuegoComponent from "./components/MiniJuego/MiniJuego";
+import { createPhotoId, deleteStoredPhoto, loadStoredPhotos, saveStoredPhoto, type StoredPhoto } from "./utils/photoStore";
 import "./App.css";
 
 /* ===== CONFIGURACIÓN DE RUTAS: Home, Header, Footer y pantallas ===== */
@@ -261,33 +262,46 @@ const playerPhotos = [
 /* ===== FIN DE DATOS DE JUGADORES ===== */
 
 /* ===== DATOS DE POSTALES: Galeria y GaleriaDetalle (índice 10 = postal 11) ===== */
+const postcardImages = [
+  "/estadios/EstadioAcereros.jpeg",
+  "/estadios/EstadioSultanes.jpg",
+  "/jugadores/Charros/JaphetAmador.jpg",
+  "/postales/explorador-del-norte.jpg",
+  "/postales/conocedor-de-la-liga.png",
+  "/postales/marcador-encontrado.png",
+  "/postales/un-siglo-de-historia.png",
+  "/postales/gran-coleccionista.png",
+  "/postales/temporada-perfecta.png",
+  "/jugadores/Dorados/SebastiánElizalde.jpg",
+];
+
 const galleryItems: GalleryItem[] = [
-  { title: "Noche de serie", description: "Las luces se encienden y el diamante se convierte en el punto de encuentro de toda una ciudad." },
-  { title: "Bajo las luces", description: "Una postal del juego nocturno, cuando cada lanzamiento se vive con máxima intensidad." },
-  { title: "Novena entrada", description: "Los últimos outs concentran la estrategia, la tensión y la esperanza de la tribuna." },
-  { title: "Casa llena", description: "Miles de voces forman una sola porra alrededor del terreno de juego." },
-  { title: "El turno", description: "Bateador y pitcher se enfrentan en el duelo que define cada jugada." },
-  { title: "Desde la lomita", description: "Control, velocidad y precisión antes de que la pelota viaje hacia el plato." },
-  { title: "Recta al plato", description: "El lanzamiento rompe el silencio en una fracción de segundo." },
-  { title: "Poder al bat", description: "El instante exacto en que el swing transforma un lanzamiento en espectáculo." },
-  { title: "Último out", description: "Una jugada final puede cerrar la noche y convertirse en recuerdo para siempre." },
-  { title: "Guardia del plato", description: "Concentración absoluta antes de buscar el lanzamiento perfecto para conectar." },
-].map((item, index) => ({ ...item, image: galleryPhotos[index], type: "image" as const }));
+  { title: "Primera entrada", description: "La ficha de tu primer equipo abre la colección: identidad, estadio e historia de un club de la Zona Norte." },
+  { title: "Racha perfecta", description: "Cinco preguntas de un mismo club respondidas sin errores en un solo intento." },
+  { title: "Bateador novato", description: "500 puntos en Home Run Norte: el primer paso de un bateador que empieza a dominar el swing." },
+  { title: "Explorador del norte", description: "Cinco fichas de equipos diferentes recorridas, cinco historias de la Zona Norte reunidas en una postal." },
+  { title: "Conocedor de la liga", description: "Tres bloques de trivia completados: datos, récords y curiosidades de tres clubes de la liga." },
+  { title: "Marcador encontrado", description: "La cámara encontró el marcador y la realidad aumentada se suma a la colección." },
+  { title: "Un siglo de historia", description: "Cien años de la LMB en una postal: torneos, leyendas y momentos que marcaron a la liga." },
+  { title: "Gran coleccionista", description: "Siete retos completados y siete postales abiertas: la colección empieza a tomar forma." },
+  { title: "Temporada perfecta", description: "Diez clubes de la Zona Norte superados en la trivia: una temporada de diez de diez." },
+  { title: "Guardia del plato", description: "1,000 puntos en el minijuego: concentración y reflejos para proteger el plato." },
+].map((item, index) => ({ ...item, image: postcardImages[index], type: "image" as const }));
 
 galleryItems.push(
   {
-    title: "Movimiento en la lomita",
-    description: "La mecánica completa de un pitcher, desde la preparación hasta soltar la pelota rumbo al plato.",
-    image: galleryPhotos[5],
+    title: "Puntaje de 1500",
+    description: "1,500 puntos en el minijuego y un lanzamiento que queda grabado como marca personal.",
+    image: "/postales/postal11-poster.jpg",
     type: "video",
-    video: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Hyun-jin_Ryu_Pitching_motion.webm",
+    video: "/postales/Postal11_Video.mp4",
   },
   {
-    title: "El lanzamiento",
-    description: "Una entrega rápida capturada desde el inicio del movimiento hasta el final de la jugada.",
-    image: galleryPhotos[6],
+    title: "Archivo Waysball",
+    description: "Los once retos anteriores completados abren el archivo final: los diez clubes y la historia de la liga en una sola colección.",
+    image: "/postales/postal12-poster.jpg",
     type: "video",
-    video: "https://upload.wikimedia.org/wikipedia/commons/3/34/Steven_Brault%27s_delivery.webm",
+    video: "/postales/Postal12_Video.mp4",
   },
 );
 
@@ -295,19 +309,61 @@ galleryItems.push(
   {
     title: "Mascota de Sultanes",
     description: "La mascota de Monterrey, lista para animar cada entrada desde el diamante.",
-    image: "/Mascotas/SultanesFurro.jpeg",
+    image: "/Mascotas/MascotaSultanes.jpeg",
     type: "image",
   },
   {
     title: "Mascota de Tecolotes",
     description: "El representante de los Dos Laredos acompaña esta postal desbloqueada con realidad aumentada.",
-    image: "/Mascotas/TecolotesFurro.jpeg",
+    image: "/Mascotas/MascotaTecolotes.jpeg",
     type: "image",
   },
   {
     title: "Mascota de Toros",
     description: "La fuerza de Tijuana llega a la colección con esta postal de su mascota.",
-    image: "/Mascotas/TorosFurro.jpeg",
+    image: "/Mascotas/MascotaToros.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Acereros",
+    description: "La Furia Azul también tiene mascota: acero, energía y porra para Monclova.",
+    image: "/Mascotas/MascotaAcereros.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Caliente",
+    description: "La nueva era de Durango se presenta con una mascota llena de fuego.",
+    image: "/Mascotas/MascotaCalientesDurango.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Charros",
+    description: "La tradición de Jalisco se vive con la mascota de los Charros.",
+    image: "/Mascotas/MascotaCharros.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Dorados",
+    description: "El orgullo de Chihuahua llega a la colección con esta postal de su mascota.",
+    image: "/Mascotas/MascotaDorados.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Rieleros",
+    description: "Aguascalientes suma su mascota ferroviaria a la galería.",
+    image: "/Mascotas/MascotaRieleros.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Algodoneros",
+    description: "La Laguna celebra su identidad con esta mascota de algodón.",
+    image: "/Mascotas/MascotaUnionLaguna.jpeg",
+    type: "image",
+  },
+  {
+    title: "Mascota de Saraperos",
+    description: "Saltillo aporta color y tradición con la mascota de los Saraperos.",
+    image: "/Mascotas/MascotaSaraperos.jpeg",
     type: "image",
   },
 );
@@ -315,21 +371,28 @@ galleryItems.push(
 
 /* ===== TEXTOS Y RECOMPENSAS: ListaRetos y MenuHamburguesa ===== */
 const challenges = [
-  { title: "Primera entrada", description: "Explora la ficha completa de tu primer equipo de la Zona Norte.", reward: "Noche de serie" },
-  { title: "Racha perfecta", description: "Responde correctamente las cinco preguntas de un club en un solo intento.", reward: "Bajo las luces" },
-  { title: "Bateador novato", description: "Consigue 500 puntos en el minijuego Home Run Norte.", reward: "Novena entrada" },
-  { title: "Explorador del norte", description: "Visita las fichas de cinco equipos diferentes.", reward: "Casa llena" },
-  { title: "Conocedor de la liga", description: "Completa los bloques de trivia de tres clubes.", reward: "El turno" },
-  { title: "Marcador encontrado", description: "Activa la cámara y entra al modo de realidad aumentada.", reward: "Desde la lomita" },
-  { title: "Un siglo de historia", description: "Recorre la historia, torneos y momentos legendarios de la LMB.", reward: "Recta al plato" },
-  { title: "Gran coleccionista", description: "Completa siete retos y abre sus respectivas postales.", reward: "Poder al bat" },
-  { title: "Temporada perfecta", description: "Supera la trivia de los diez clubes de la Zona Norte.", reward: "Último out" },
+  { title: "Primera entrada", description: "Explora la ficha completa de tu primer equipo de la Zona Norte.", reward: "Primera entrada" },
+  { title: "Racha perfecta", description: "Responde correctamente las cinco preguntas de un club en un solo intento.", reward: "Racha perfecta" },
+  { title: "Bateador novato", description: "Consigue 500 puntos en el minijuego Home Run Norte.", reward: "Bateador novato" },
+  { title: "Explorador del norte", description: "Visita las fichas de cinco equipos diferentes.", reward: "Explorador del norte" },
+  { title: "Conocedor de la liga", description: "Completa los bloques de trivia de tres clubes.", reward: "Conocedor de la liga" },
+  { title: "Marcador encontrado", description: "Activa la cámara y entra al modo de realidad aumentada.", reward: "Marcador encontrado" },
+  { title: "Un siglo de historia", description: "Recorre la historia, torneos y momentos legendarios de la LMB.", reward: "Un siglo de historia" },
+  { title: "Gran coleccionista", description: "Completa siete retos y abre sus respectivas postales.", reward: "Gran coleccionista" },
+  { title: "Temporada perfecta", description: "Supera la trivia de los diez clubes de la Zona Norte.", reward: "Temporada perfecta" },
   { title: "Guardia del plato", description: "Alcanza una puntuación de 1,000 puntos en el minijuego.", reward: "Guardia del plato" },
-  { title: "Puntaje de 1500", description: "Alcanza una puntuación de 1500 puntos en el minijuego.", reward: "Movimiento en la lomita" },
-  { title: "Archivo Waysball", description: "Completa los once retos anteriores y termina toda la colección.", reward: "El lanzamiento" },
+  { title: "Puntaje de 1500", description: "Alcanza una puntuación de 1500 puntos en el minijuego.", reward: "Puntaje de 1500" },
+  { title: "Archivo Waysball", description: "Completa los once retos anteriores y termina toda la colección.", reward: "Archivo Waysball" },
   { title: "Escanea el logo de los Sultanes", description: "Reconoce el marcador de los Sultanes de Monterrey en realidad aumentada.", reward: "Mascota de Sultanes" },
   { title: "Escanea el logo de los Tecolotes", description: "Reconoce el marcador de los Tecolotes de los Dos Laredos en realidad aumentada.", reward: "Mascota de Tecolotes" },
   { title: "Escanea el logo de los Toros", description: "Reconoce el marcador de los Toros de Tijuana en realidad aumentada.", reward: "Mascota de Toros" },
+  { title: "Escanea el logo de los Acereros", description: "Reconoce el marcador de los Acereros de Monclova en realidad aumentada.", reward: "Mascota de Acereros" },
+  { title: "Escanea el logo del Caliente", description: "Reconoce el marcador de Caliente de Durango en realidad aumentada.", reward: "Mascota de Caliente" },
+  { title: "Escanea el logo de los Charros", description: "Reconoce el marcador de los Charros de Jalisco en realidad aumentada.", reward: "Mascota de Charros" },
+  { title: "Escanea el logo de los Dorados", description: "Reconoce el marcador de los Dorados de Chihuahua en realidad aumentada.", reward: "Mascota de Dorados" },
+  { title: "Escanea el logo de los Rieleros", description: "Reconoce el marcador de los Rieleros de Aguascalientes en realidad aumentada.", reward: "Mascota de Rieleros" },
+  { title: "Escanea el logo de los Algodoneros", description: "Reconoce el marcador de los Algodoneros Unión Laguna en realidad aumentada.", reward: "Mascota de Algodoneros" },
+  { title: "Escanea el logo de los Saraperos", description: "Reconoce el marcador de los Saraperos de Saltillo en realidad aumentada.", reward: "Mascota de Saraperos" },
 ];
 
 const initialCompletedChallenges: number[] = [];
@@ -1867,6 +1930,8 @@ export default function App() {
   );
   const [pinnedChallenge, setPinnedChallenge] = useState(0);
   const [galleryPostcard, setGalleryPostcard] = useState<number | null>(null);
+  const [challengeFocus, setChallengeFocus] = useState<number | null>(null);
+  const [arPhotos, setArPhotos] = useState<StoredPhoto[]>([]);
   const [seasonResetKey, setSeasonResetKey] = useState(0);
   const [notifications, setNotifications] = useState<Array<{ id: number; text: string }>>([]);
   const [scrollIndicator, setScrollIndicator] = useState({ offset: 0, visible: false });
@@ -1926,11 +1991,39 @@ export default function App() {
     selectTeam(index);
   };
   const recognizeTeamInAR = (teamIndex: number) => {
-    const challengeByTeam: Record<number, number> = { 4: 12, 8: 13, 9: 14 };
+    const challengeByTeam: Record<number, number> = { 0: 15, 1: 16, 2: 17, 3: 18, 4: 12, 5: 19, 6: 20, 7: 21, 8: 13, 9: 14 };
     const challengeIndex = challengeByTeam[teamIndex];
     if (challengeIndex !== undefined) completeChallenge(challengeIndex);
   };
   /* ===== FIN DE CALLBACK DE RealidadAumentada ===== */
+
+  /* ===== FOTOS DE REALIDAD AUMENTADA: sección "Mis fotos" de la galería ===== */
+  useEffect(() => {
+    let cancelled = false;
+    loadStoredPhotos()
+      .then((storedPhotos) => {
+        if (!cancelled) setArPhotos(storedPhotos);
+      })
+      .catch((error) => console.warn("No se pudieron cargar las fotos guardadas:", error));
+    return () => { cancelled = true; };
+  }, []);
+
+  const saveArPhoto = ({ dataUrl, teamName }: { dataUrl: string; teamName: string | null }) => {
+    const record: StoredPhoto = {
+      id: createPhotoId(),
+      dataUrl,
+      createdAt: Date.now(),
+      teamName: teamName ?? null,
+    };
+    setArPhotos((current) => [record, ...current]);
+    saveStoredPhoto(record).catch((error) => console.warn("No se pudo guardar la foto:", error));
+  };
+
+  const removeArPhoto = (id: string) => {
+    setArPhotos((current) => current.filter((photo) => photo.id !== id));
+    deleteStoredPhoto(id).catch((error) => console.warn("No se pudo borrar la foto:", error));
+  };
+  /* ===== FIN DE FOTOS DE REALIDAD AUMENTADA ===== */
 
   /* ===== CALLBACK DE Trivia ===== */
   const completeTriviaClub = (clubIndex: number, perfectAttempt: boolean) => {
@@ -1945,20 +2038,25 @@ export default function App() {
   /* ===== FIN DE CALLBACK DE Trivia ===== */
 
   /* ===== NAVEGACIÓN: Home, Header, Footer, MenuHamburguesa y Galeria ===== */
-  const go = (next: View) => {
+  const go = (next: View, options?: { preserveScroll?: boolean; focusChallenge?: number }) => {
     /* Si sale de un detalle hacia Equipos, vuelve a la altura donde estaba la lista */
     const returningToTeams = next === "equipos" && teamIndex !== null;
     if (returningToTeams) restoreTeamsScrollRef.current = teamsScrollRef.current;
     setTeamIndex(null);
     if (next === "galeria") setGalleryPostcard(null);
+    setChallengeFocus(next === "retos" ? options?.focusChallenge ?? null : null);
     setView(next);
-    if (!returningToTeams) window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!returningToTeams && !options?.preserveScroll) window.scrollTo({ top: 0, behavior: "smooth" });
+    if (options?.preserveScroll) window.scrollTo({ top: 0, behavior: "auto" });
   };
   const viewPostcard = (index: number) => {
     setTeamIndex(null);
     setGalleryPostcard(index);
     setView("galeria");
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const showChallengeDetails = (index: number) => {
+    go("retos", { preserveScroll: true, focusChallenge: index });
   };
   /* ===== FIN DE NAVEGACIÓN ===== */
 
@@ -2091,7 +2189,7 @@ export default function App() {
     /* ===== Trivia: FIN ===== */
 
     /* ===== RealidadAumentada: INICIO ===== */
-    if (view === "ar") return <RealidadAumentadaComponent teams={teams} galleryPhotos={galleryPhotos} unlock={() => completeChallenge(5)} onOpenTeam={openTeamFromAR} onTeamRecognized={recognizeTeamInAR} />;
+    if (view === "ar") return <RealidadAumentadaComponent teams={teams} galleryPhotos={galleryPhotos} unlock={() => completeChallenge(5)} onOpenTeam={openTeamFromAR} onTeamRecognized={recognizeTeamInAR} onSavePhoto={saveArPhoto} />;
     /* ===== RealidadAumentada: FIN ===== */
 
     /* ===== MiniJuego: INICIO ===== */
@@ -2119,6 +2217,7 @@ export default function App() {
         viewPostcard={viewPostcard}
         pinnedChallenge={pinnedChallenge}
         pinChallenge={setPinnedChallenge}
+        focusChallenge={challengeFocus}
       />
     );
     /* ===== ListaRetos: FIN ===== */
@@ -2132,16 +2231,23 @@ export default function App() {
       <GaleriaComponent
         galleryItems={galleryItems}
         completedChallenges={completedChallenges}
-        showChallenges={() => go("retos")}
+        showChallenges={showChallengeDetails}
         openDetail={(index: number) => { setGalleryPostcard(index); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+        photos={arPhotos}
+        onDeletePhoto={removeArPhoto}
+        goCamera={() => go("ar")}
       />
     );
     /* ===== Galeria: FIN ===== */
-  }, [view, teamIndex, completedChallenges, pinnedChallenge, galleryPostcard, seasonResetKey]);
+  }, [view, teamIndex, completedChallenges, pinnedChallenge, galleryPostcard, challengeFocus, seasonResetKey, arPhotos]);
   /* ===== FIN DE ROUTER INTERNO ===== */
 
   return (
     <div className="app-shell">
+      {/* Tira real (no pseudo-elemento) sobre el área segura superior: Safari 26
+          ignora los pseudo-elementos al calcular el color de la barra de estado,
+          así que este elemento asegura que el tinte sea el del header. */}
+      <div className="chrome-top" aria-hidden="true" />
       {showSplash && <SplashScreen />}
       {/* ===== Header: INICIO ===== */}
       <HeaderComponent onMenu={() => setMenuOpen(true)} onHome={() => go("inicio")} isGame={view === "juego"} level={level} />

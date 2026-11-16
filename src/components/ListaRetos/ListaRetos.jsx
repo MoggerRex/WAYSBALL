@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from "react";
 import { Image, Pin, HelpCircle, Check, Images } from "lucide-react";
 import "./ListaRetos.css";
 
@@ -7,8 +8,18 @@ export default function ListaRetos({
   goGallery,
   viewPostcard,
   pinnedChallenge,
-  pinChallenge
+  pinChallenge,
+  focusChallenge = null
 }) {
+  const articleRefs = useRef([]);
+
+  useLayoutEffect(() => {
+    if (focusChallenge === null || focusChallenge === undefined) return;
+    const target = articleRefs.current[focusChallenge];
+    if (!target) return;
+    target.scrollIntoView({ behavior: "auto", block: "start", inline: "nearest" });
+  }, [focusChallenge]);
+
   return (
     <main className="challenges-page page">
       <div className="page-intro challenges-intro">
@@ -36,7 +47,11 @@ export default function ListaRetos({
           const isPinned = pinnedChallenge === index;
 
           return (
-            <article className={completed ? "completed" : ""} key={challenge.title}>
+            <article
+              className={`${completed ? "completed" : ""} ${focusChallenge === index ? "focused" : ""}`.trim()}
+              key={challenge.title}
+              ref={(node) => { articleRefs.current[index] = node; }}
+            >
               <div className="challenge-number">
                 {completed ? (
                   <Check size={20} />

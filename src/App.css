@@ -1,4 +1,6 @@
-.app-shell { margin: 0 auto; min-height: 100dvh; max-width: 520px; overflow: hidden; padding: var(--header-height) 0 var(--footer-height); position: relative; background: var(--navy); box-shadow: 0 0 60px rgba(0,0,0,.45); }
+.app-shell { margin: 0 auto; min-height: 100dvh; max-width: 520px; overflow: hidden; padding: var(--header-height) 0 var(--footer-height); position: relative; background: #d2dbeb; box-shadow: 0 0 60px rgba(0,0,0,.45); }
+.chrome-top { background-color: #d2dbeb; height: calc(var(--safe-top) + 1px); left: 0; margin: 0 auto; max-width: 520px; pointer-events: none; position: fixed; right: 0; top: 0; width: 100%; z-index: 60; }
+@media (min-width: 720px) { .chrome-top { display: none; } }
 .progress-notification { animation: notification-in .25s ease both; background: var(--paper); border-left: 4px solid var(--red); box-shadow: 0 8px 22px rgba(0,28,45,.3); color: var(--ink); max-width: 230px; padding: 11px 14px; position: fixed; right: max(14px, calc((100vw - 520px) / 2 + 14px)); top: calc(var(--header-height) + 10px); width: calc(100% - 28px); z-index: 45; }
 .progress-notification span, .progress-notification strong { display: block; }
 .progress-notification span { color: var(--red); font-size: 8px; font-weight: 700; letter-spacing: 1px; margin-bottom: 3px; text-transform: uppercase; }

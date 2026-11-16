@@ -22,7 +22,7 @@ export default function Header({ onMenu, onHome, isGame, level }) {
         onClick={isGame ? onHome : onMenu}
         aria-label={isGame ? "Volver al inicio" : "Abrir menú"}
       >
-        {isGame ? <ChevronLeft size={24} /> : <Menu size={24} />}
+        {isGame ? <ChevronLeft size={22} /> : <Menu size={22} />}
       </button>
       <Brand onClick={onHome} />
       <button

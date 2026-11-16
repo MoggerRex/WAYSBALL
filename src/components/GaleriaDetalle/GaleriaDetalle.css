@@ -2,6 +2,7 @@
 .gallery-detail-heading { padding: 32px 22px 24px; }
 .gallery-image-stage { background: var(--navy-black); height: 460px; overflow: hidden; position: relative; }
 .gallery-image-stage > img, .gallery-image-stage > video { height: 100%; object-fit: cover; width: 100%; }
+.gallery-image-stage > video { background: var(--navy-black); object-fit: contain; }
 .filters-section { border-top: 1px solid rgba(210,219,235,.16); padding: 35px 22px 55px; }
 .filter-grid { display: grid; gap: 7px; grid-template-columns: repeat(4,minmax(0,1fr)); }
 .gallery-detail-back { align-items: center; background: rgba(0,56,90,.98); border: 0; box-shadow: 0 8px 18px rgba(0,18,30,.18); color: var(--mist); cursor: pointer; display: flex; font-size: 12px; gap: 4px; height: 58px; left: 50%; max-width: 520px; padding: 0 20px; position: fixed; top: var(--header-height); transform: translateX(-50%); width: 100%; z-index: 29; }

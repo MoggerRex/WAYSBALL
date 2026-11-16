@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --navy: #00385a;
   --navy-dark: #002a44;
   --navy-black: #001c2d;
@@ -13,33 +14,35 @@
   --font-body: "DM Sans", sans-serif;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --header-height: calc(68px + var(--safe-top));
-  --footer-height: calc(64px + var(--safe-bottom));
+  --header-height: calc(54px + var(--safe-top));
+  --footer-height: calc(54px + var(--safe-bottom));
 }
 
 * { box-sizing: border-box; }
-html { background: var(--navy-black); scrollbar-width: none; }
+/* El fondo del documento es siempre el tono del header/footer. En móvil es lo
+   que Safari usa para teñir la barra de estado y la barra inferior; en escritorio
+   el degradado oscuro se dibuja encima con background-image. */
+html { background-color: #d2dbeb; scrollbar-width: none; }
 html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; height: 0; width: 0; }
-body { margin: 0; min-width: 320px; background: var(--navy); color: var(--white); font-family: var(--font-body); }
+body { margin: 0; min-width: 320px; background-color: #d2dbeb; color: var(--white); font-family: var(--font-body); }
 @media (max-width: 719px) {
-  /* El fondo del documento usa el color del footer: así la barra del navegador
-     del teléfono (y las áreas seguras) no se ven oscuras. */
-  html, body { background: #d2dbeb; }
-  /* Tiras fijas que cubren el área segura de arriba (notch / barra de estado)
-     y la de abajo (home indicator), siempre en el tono del header/footer. */
-  body::before, body::after {
-    background: #d2dbeb;
+  html { overscroll-behavior-y: none; }
+  body { overscroll-behavior-y: none; }
+  /* Tira fija inferior que cubre el área segura (home indicator). Se mantiene
+     en tono del footer y no tapa contenido. */
+  body::after {
+    background-color: #d2dbeb;
+    bottom: 0;
     content: "";
+    height: calc(var(--safe-bottom) + 1px);
     left: 0;
     pointer-events: none;
     position: fixed;
     right: 0;
     z-index: 60;
   }
-  body::before { height: calc(var(--safe-top) + 1px); top: 0; }
-  body::after { bottom: 0; height: calc(var(--safe-bottom) + 1px); }
 }
-@media (min-width: 720px) { body { background: radial-gradient(circle at top, #0c5277, var(--navy-black) 65%); } }
+@media (min-width: 720px) { body { background-image: radial-gradient(circle at top, #0c5277, var(--navy-black) 65%); } }
 button { color: inherit; font: inherit; }
 button:focus-visible { outline: 3px solid #f3c543; outline-offset: 3px; }
 h1, h2, h3, p { margin-top: 0; }

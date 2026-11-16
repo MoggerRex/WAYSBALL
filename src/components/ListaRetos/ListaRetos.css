@@ -2,8 +2,9 @@
 .challenge-progress { background: rgba(210,219,235,.18); height: 5px; margin-top: 25px; }
 .challenge-progress i { background: var(--red); display: block; height: 100%; }
 .challenge-list { display: grid; gap: 11px; padding: 16px 14px 50px; }
-.challenge-list article { background: rgba(210,219,235,.06); border: 1px solid rgba(210,219,235,.16); display: grid; gap: 15px; grid-template-columns: 45px 1fr; padding: 19px 16px; }
+.challenge-list article { background: rgba(210,219,235,.06); border: 1px solid rgba(210,219,235,.16); display: grid; gap: 15px; grid-template-columns: 45px 1fr; padding: 19px 16px; scroll-margin-top: calc(var(--header-height) + 14px); }
 .challenge-list article.completed { border-color: rgba(111,190,128,.45); }
+.challenge-list article.focused { border-color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
 .challenges-intro { padding-bottom: 32px; }
 .challenges-intro > small { color: var(--mist); display: block; font-size: 9px; margin-top: 8px; text-transform: uppercase; }
 .challenge-list article.completed { background: color-mix(in srgb, var(--navy) 82%, #2f7a54); }

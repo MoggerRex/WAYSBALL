@@ -20,7 +20,7 @@ export default function Footer({ view, go }) {
             onClick={() => go(item.view)}
           >
             <span className="footer-icon" aria-hidden="true">
-              <IconComponent size={20} />
+              <IconComponent size={18} />
             </span>
             <span>{item.label}</span>
           </button>

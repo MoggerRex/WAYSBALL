@@ -36,6 +36,110 @@
   filter: grayscale(1) blur(4px) brightness(.45); 
 }
 .gallery-intro { padding-bottom: 38px; }
+
+/* ===== Pestañas: Postales / Mis fotos ===== */
+.gallery-tabs { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; margin-top: 22px; }
+.gallery-tabs button {
+  background: rgba(210, 219, 235, .08);
+  border: 1px solid rgba(210, 219, 235, .28);
+  color: var(--mist);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 8px;
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+.gallery-tabs button.active { background: var(--red); border-color: var(--red); color: #fff; }
+.gallery-tabs button:not(.active):hover { background: rgba(210, 219, 235, .16); }
+.gallery-tabs button:focus-visible { outline: 2px solid var(--mist); outline-offset: 2px; }
+.gallery-tabs button { font-family: var(--font-display); font-size: 11px; letter-spacing: 1.1px; text-transform: uppercase; }
+.gallery-tabs small { font-family: var(--font-body); font-size: 9px; letter-spacing: .3px; opacity: .8; text-transform: none; }
+
+/* ===== Mis fotos ===== */
+.photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.photo-card { aspect-ratio: .8; }
+.photo-card > img { height: 100%; object-fit: cover; width: 100%; }
+.photo-empty {
+  align-items: center;
+  background: var(--navy-dark);
+  color: var(--mist);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 46px 26px 70px;
+  text-align: center;
+}
+.photo-empty-icon {
+  align-items: center;
+  border: 1px solid rgba(210, 219, 235, .3);
+  border-radius: 50%;
+  color: var(--mist);
+  display: flex;
+  height: 62px;
+  justify-content: center;
+  margin-bottom: 4px;
+  width: 62px;
+}
+.photo-empty strong { color: var(--white); font-family: var(--font-display); font-size: 15px; letter-spacing: .6px; text-transform: uppercase; }
+.photo-empty p { font-size: 12px; line-height: 1.5; margin: 0; max-width: 280px; }
+.photo-empty .primary-button { margin-top: 10px; min-height: 44px; }
+
+/* ===== Visor de foto ===== */
+.photo-lightbox {
+  background: rgba(0, 12, 21, .97);
+  display: flex;
+  flex-direction: column;
+  inset: 0;
+  margin: 0 auto;
+  max-width: 520px;
+  position: fixed;
+  z-index: 70;
+}
+.photo-lightbox > img { flex: 1; min-height: 0; object-fit: contain; padding: 12px; width: 100%; }
+.photo-lightbox-close {
+  align-items: center;
+  background: rgba(0, 28, 45, .75);
+  border: 1px solid rgba(210, 219, 235, .35);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  position: absolute;
+  right: 14px;
+  top: calc(var(--safe-top) + 14px);
+  width: 40px;
+  z-index: 2;
+}
+.photo-lightbox-bar {
+  align-items: center;
+  background: var(--navy-dark);
+  border-top: 1px solid rgba(210, 219, 235, .16);
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  padding: 12px 16px calc(12px + var(--safe-bottom));
+}
+.photo-lightbox-bar strong { color: var(--white); display: block; font-family: var(--font-display); font-size: 13px; letter-spacing: .5px; text-transform: uppercase; }
+.photo-lightbox-bar small { color: var(--mist); font-size: 10px; }
+.photo-delete {
+  align-items: center;
+  background: transparent;
+  border: 1px solid rgba(224, 43, 17, .65);
+  color: #ff8a75;
+  cursor: pointer;
+  display: flex;
+  font-size: 11px;
+  font-weight: 700;
+  gap: 6px;
+  letter-spacing: .6px;
+  padding: 9px 12px;
+  text-transform: uppercase;
+}
+.photo-delete:active { background: rgba(224, 43, 17, .18); }
+.photo-delete.confirm { background: var(--red); border-color: var(--red); color: #fff; }
 .gallery-card:after { background: linear-gradient(transparent 38%, rgba(0,28,45,.95)); content: ""; inset: 0; position: absolute; }
 .gallery-card:not(.locked):hover > img, .gallery-card:not(.locked):hover > video { transform: scale(1.06); }
 .gallery-caption { bottom: 9px; color: white; left: 8px; position: absolute; right: 5px; z-index: 2; }
